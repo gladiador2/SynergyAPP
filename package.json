@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "express-rate-limit": "^8.0.1",
+    "facturacionelectronicapy-setapi": "^1.0.30",
+    "helmet": "^8.1.0"
+  },
+  "devDependencies": {
+    "@types/express-rate-limit": "^6.0.2",
+    "@types/helmet": "^4.0.0"
+  }
+}

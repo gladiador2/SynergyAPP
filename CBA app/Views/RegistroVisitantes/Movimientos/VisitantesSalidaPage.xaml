@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CBA_app.Views.RegistroVisitantes.Movimientos.VisitantesSalidaPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:viewModels="clr-namespace:CBA_app.ViewModels.RegistroVisitantes"
+             Title="Salida">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Buscar" IconImageSource = "lupa.png" Clicked="btnBuscador_Clicked" x:Name="btnBuscador"  />
+    </ContentPage.ToolbarItems>
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="#111111" StatusBarStyle="LightContent" />
+    </ContentPage.Behaviors>
+    <ContentPage.BindingContext>
+        <viewModels:SalidaVisitantesViewModel />
+    </ContentPage.BindingContext>
+    <ScrollView>
+        <VerticalStackLayout >
+            <Grid>
+                <Grid VerticalOptions="StartAndExpand" BackgroundColor="{StaticResource Primary}" HeightRequest="56" IsVisible="false"  x:Name="PanelsearchOperaciones">
+                    <StackLayout>
+
+                        <Frame HeightRequest="41" Margin="5,0" Padding="0" HasShadow="True" BorderColor="White"  HorizontalOptions="FillAndExpand" WidthRequest="300" CornerRadius="100" IsVisible="false" x:Name="FrameSeach">
+                            <SearchBar
+               CancelButtonColor="Red"
+               x:Name="searchOperaciones"
+                  BackgroundColor="White"
+               CharacterSpacing="1"
+               CursorPosition="1"
+               Text="{Binding SearchText}"
+               
+               FontAttributes="Italic"
+               FontFamily="RobotoRegularRegular"
+               Placeholder="Numero de documento o Chapa"
+               PlaceholderColor="Gray"
+                 
+               TextColor="Black"
+               VerticalTextAlignment="Center"
+               HorizontalOptions="FillAndExpand"
+                WidthRequest="300"
+  
+              >
+
+                            </SearchBar>
+                        </Frame>
+                    </StackLayout>
+                </Grid>
+
+
+            </Grid>
+            <ActivityIndicator x:Name="loading" HeightRequest="30" Color="Blue" IsRunning="True" 
+        IsVisible="{Binding Loading}"/>
+
+            <ListView ItemsSource="{Binding ListaVisitas}" Margin="5" HasUnevenRows="True" CachingStrategy="RecycleElement" >
+                <!--<ListView.Header>
+             <Label Text="Lista de visitantes" HorizontalTextAlignment="Center"  HorizontalOptions="Center" VerticalOptions="CenterAndExpand"/>
+         </ListView.Header>-->
+
+
+
+                <ListView.ItemTemplate >
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid>
+                                <Frame Padding="0" Margin="0,10">
+                                    <Grid BackgroundColor="Transparent">
+                                        <!--<Grid.Style>
+         <Style TargetType="Grid">
+             <Setter Property="BackgroundColor" Value="Green" />
+             <Style.Triggers>
+                 <DataTrigger TargetType="Grid" Binding="{Binding BackgroundColor}" Value="S">
+                     <Setter Property="BackgroundColor" Value="PapayaWhip" />
+                 </DataTrigger>
+                 <DataTrigger TargetType="Grid" Binding="{Binding BackgroundColor}" Value="N">
+                     <Setter Property="BackgroundColor" Value="#FFFFFF" />
+                 </DataTrigger>
+             </Style.Triggers>
+         </Style>
+     </Grid.Style>-->
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition Height="auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackLayout Grid.Row="0" VerticalOptions="FillAndExpand" BackgroundColor="Transparent">
+                                            <Grid VerticalOptions="FillAndExpand">
+                                                <Grid.Style>
+                                                    <Style TargetType="Grid">
+                                                        <Setter Property="IsVisible" Value="true"></Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger TargetType="Grid" Binding="{Binding VEHICULO_CHAPA}" Value="">
+                                                                <Setter Property="IsVisible" Value="false" />
+
+                                                            </DataTrigger>
+
+                                                        </Style.Triggers>
+
+                                                    </Style>
+                                                </Grid.Style>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition />
+
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="50"/>
+                                                </Grid.ColumnDefinitions>
+
+
+                                                <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="SpaceAround" Grid.Column="0" Grid.Row="0" Margin="5" VerticalOptions="Center">
+                                                    <Label Text="Tipo: " FontSize="Small"></Label>
+                                                    <Label Text="{Binding VEHICULO_TIPO}" FontAttributes="Bold" FontSize="Small"></Label>
+                                                </FlexLayout>
+                                                <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="SpaceAround" Grid.Column="1" Grid.Row="0" VerticalOptions="Center" HorizontalOptions="Center">
+                                                    <Label Text="Marca: " FontSize="Small"></Label>
+                                                    <Label Text="{Binding VEHICULO_MARCA}" FontAttributes="Bold"  FontSize="Small"></Label>
+                                                </FlexLayout>
+                                                <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="SpaceAround" Grid.Column="2" Grid.Row="0" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,8,0">
+                                                    <Label Text="Chapa: " FontSize="Small"></Label>
+                                                    <Label Text="{Binding VEHICULO_CHAPA}" FontAttributes="Bold"  FontSize="Small"></Label>
+                                                </FlexLayout>
+                                                <Button Grid.Column="3" x:Name="btnRegistrarSalida" Clicked="btnRegistrarSalida_Clicked" ImageSource="salidas.png" HorizontalOptions="End" Margin="5" HeightRequest="30" WidthRequest="30"></Button>
+                                            </Grid>
+                                            <StackLayout BackgroundColor="Transparent">
+                                                <Label Text="Visitante sin vehiculo" FontAttributes="Bold" BackgroundColor="Transparent" HorizontalTextAlignment="Center">
+                                                    <Label.Style>
+                                                        <Style TargetType="Label">
+                                                            <Setter Property="IsVisible" Value="false"></Setter>
+                                                            <Style.Triggers>
+                                                                <DataTrigger TargetType="Label" Binding="{Binding VEHICULO_CHAPA}" Value="">
+                                                                    <Setter Property="IsVisible" Value="true"></Setter>
+
+                                                                </DataTrigger>
+
+                                                            </Style.Triggers>
+
+                                                        </Style>
+                                                    </Label.Style>
+                                                </Label>
+
+                                            </StackLayout>
+                                        </StackLayout>
+
+
+
+                                        <StackLayout BackgroundColor="LightGray" Grid.Row="1" Margin="1">
+                                            <ListView ItemsSource="{Binding visitantes}" SelectionMode="None" CachingStrategy="RecycleElement" >
+                                                <ListView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <ViewCell>
+                                                            <Grid BackgroundColor="Transparent" >
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="auto"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <Frame Grid.ColumnSpan="4" BackgroundColor="Transparent" HasShadow="True" BorderColor="{StaticResource Secondary}"   >
+
+                                                                </Frame>
+                                                                <Label Margin="5" Text="{Binding visitante_documento}" Grid.Column="0" VerticalTextAlignment="Center" ></Label>
+                                                                <Label Text="{Binding visitante_nombre}" Grid.Column="1" VerticalTextAlignment="Center" ></Label>
+                                                                <Label Text="{Binding visitante_empresa}" Grid.Column="2"  VerticalTextAlignment="Center" ></Label>
+                                                                <Button Grid.Column="3" Clicked="Button_Clicked" ImageSource="salidas.png" HeightRequest="30" WidthRequest="30" BackgroundColor="{StaticResource quinary}" Margin="5"/>
+
+
+                                                            </Grid>
+
+
+                                                        </ViewCell>
+
+                                                    </DataTemplate>
+                                                </ListView.ItemTemplate>
+                                            </ListView>
+
+
+                                        </StackLayout>
+                                    </Grid>
+                                </Frame>
+
+
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+
+
+        </VerticalStackLayout>
+    </ScrollView>
+    
+</ContentPage>

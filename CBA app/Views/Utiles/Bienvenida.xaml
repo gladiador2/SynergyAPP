@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CBA_app.Views.Bienvenida"
+             xmlns:templates="clr-namespace:CBA_app.Templates"
+             Title="Bienvenida">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Acción"
+                  IconImageSource="engranaje.png"
+                  Clicked="ToolbarItem_Clicked" />
+    </ContentPage.ToolbarItems>
+    <Grid>
+        <!-- Contenido principal -->
+        <ContentView x:Name="MainContentView">
+            <ContentView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
+            </ContentView.GestureRecognizers>
+            <!-- Tu contenido aquí -->
+        </ContentView>
+
+
+        <!-- Drawer derecho -->
+        <ContentView
+        x:Name="FlyoutLateral"
+        IsVisible="False"
+        BackgroundColor="White"
+        HorizontalOptions="End"
+        WidthRequest="250"
+            ZIndex="1">
+            
+            <Frame CornerRadius="0" HasShadow="True" BorderColor="LightGray">
+                <Frame.Shadow>
+                    <Shadow Brush="Black" 
+            Opacity="0.7"
+            Offset="0,8"
+            Radius="18" />
+                </Frame.Shadow>
+
+            </Frame>
+        </ContentView>
+        <templates:TabBarl VerticalOptions="End" ActivePage="Inicio"/>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CBA_app.Views.Login.LoginPage"
+             Shell.NavBarIsVisible="False"
+             xmlns:handlers="clr-namespace:CBA_app.Handlers"
+             Title=" ">
+    <Grid>
+        <Path Data="M 0,500 C 500,0 0,200 0,0" HorizontalOptions="FillAndExpand" VerticalOptions="End" Rotation="0">
+            <Path.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="{StaticResource Primary}" Offset="0.0" />
+                    <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                </LinearGradientBrush>
+            </Path.Fill>
+        </Path>
+        <Path Data="M -100,-200 C 30,100 300,300 500,0" HorizontalOptions="Start" VerticalOptions="Start">
+
+
+            <Path.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="{StaticResource Primary}" Offset="0.0" />
+                    <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                </LinearGradientBrush>
+            </Path.Fill>
+        </Path>
+        <VerticalStackLayout 
+        Spacing="25" 
+        Padding="30,0" 
+        VerticalOptions="Center">
+
+            <Image Source="banercba.png" HeightRequest="250" WidthRequest="250" x:Name="ImageLogoCompanhia">
+                <Image.Shadow>
+                    <Shadow Brush="Gray" Opacity="0.3" Offset="4,5" Radius="10" />
+                </Image.Shadow>
+            </Image>
+
+
+            <VerticalStackLayout Margin="0,-30,0,0">
+                <Label x:Name="welcomeLabel" Text="Bienvenido" FontFamily="Skriik" FontSize="28" TextColor="Gray" HorizontalTextAlignment="Center" >
+                    <Label.Shadow>
+                        <Shadow Brush="Gray" Opacity="0.3" Offset="4,5" Radius="10" />
+                    </Label.Shadow>
+                </Label>
+
+            </VerticalStackLayout>
+            <Grid ColumnDefinitions="*,320,*" RowDefinitions="auto,auto" RowSpacing="25">
+               
+                
+                <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                    <Frame ZIndex="1"  BorderColor="White" HeightRequest="56" WidthRequest="56" CornerRadius="28">
+                        <Image Source="user.png" HeightRequest="20" WidthRequest="20" />
+                    </Frame>
+                    <Frame HeightRequest="45" Margin="-20,0,0,0" Padding="0" HasShadow="True" BorderColor="White"  HorizontalOptions="FillAndExpand">
+                        <Frame.Shadow>
+                            <Shadow Brush="black" Opacity="0.5" Offset="5,5" Radius="5" />
+                        </Frame.Shadow>
+                        <handlers:BorderlessEntry  x:Name="txtUsuario" Text="{Binding Email}" Margin="20,0,0,0" VerticalOptions="Center" Placeholder="Usuario" Keyboard="Email" ToolTipProperties.Text="Ingrese su usuario" />
+                    </Frame>
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+
+                    <Frame ZIndex="1"  BorderColor="White" HeightRequest="56" WidthRequest="56" CornerRadius="28">
+
+                        <Image Source="lock.png" HeightRequest="20" WidthRequest="20" />
+                    </Frame>
+                    <Frame  HeightRequest="45" Margin="-20,0,0,0" Padding="0" HasShadow="True" BorderColor="White"  HorizontalOptions="FillAndExpand">
+                        <Frame.Shadow>
+                            <Shadow Brush="Black" Opacity="0.5" Offset="5,5" Radius="5" />
+                        </Frame.Shadow>
+                        <handlers:BorderlessEntry x:Name="txtContraseña" Text="{Binding Password}" Margin="20,0,0,0" VerticalOptions="Center" Placeholder="Contraseña" IsPassword="True" ToolTipProperties.Text="Ingrese su contraseña"/>
+                    </Frame>
+                </StackLayout>
+            </Grid>
+            
+            <Button Text="Ingresar"  WidthRequest="150" CornerRadius="20" HorizontalOptions="Center"  x:Name="btnIngresar"  Clicked="OnIngresar" ToolTipProperties.Text="Iniciar Sessión"  >
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="{StaticResource Secondary}" Offset="0.0" />
+                        <GradientStop Color="LightSlateGray" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Button.Background>
+                <Button.Shadow>
+                    <Shadow Brush="Black" Opacity="0.5" Offset="5,5" Radius="5" />
+                </Button.Shadow>
+            </Button>
+            <!--<Button Text="Biometria" WidthRequest="150" CornerRadius="20" HorizontalOptions="Center" Clicked="OnBiometriaClicked" ToolTipProperties.Text="Iniciar Sessión"  >
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#315ba6" Offset="0.0" />
+                        <GradientStop Color="#4784f2" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Button.Background>
+                <Button.Shadow>
+                    <Shadow Brush="Black" Opacity="0.5" Offset="5,5" Radius="5" />
+                </Button.Shadow>
+            </Button>-->
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="-5">
+                <Image Source="cba.png" HeightRequest="20" WidthRequest="20"></Image>
+                <Label Text=" CBA SA - 2025 © " FontAttributes="Bold" HorizontalOptions="Center" TextColor="Gray" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </Grid>
+    
+</ContentPage>

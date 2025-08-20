@@ -1,0 +1,47 @@
+-- Rol administrador
+INSERT INTO roles (nombre_rol, descripcion)
+VALUES ('Administrador', 'Acceso total al sistema');
+
+-- Módulo de ejemplo
+INSERT INTO modulos (nombre_modulo, descripcion)
+VALUES ('Panel de Control', 'Módulo principal de administración');
+
+-- Permisos de ejemplo
+INSERT INTO permisos (nombre_permiso, descripcion)
+VALUES 
+('crear_usuario', 'Puede crear usuarios'),
+('eliminar_usuario', 'Puede eliminar usuarios'),
+('ver_reportes', 'Puede visualizar reportes');
+
+-- Asignar permisos al rol Administrador (sobre Panel de Control)
+INSERT INTO roles_permisos (id_rol, id_permiso, id_modulo)
+SELECT 1, p.id_permiso, 1
+FROM permisos p;
+
+-- Usuario administrador inicial
+INSERT INTO usuarios (nombre_usuario, nombre_completo, email, hash_password, estado)
+VALUES (
+    'admin',
+    'Usuario Administrador',
+    'admin@example.com',
+    '$2a$10$wH3T7jkfP1n6oY5ScJuEtu2Z/jKTfPjmfqDRysQZzM/1um1V5tSOG', -- Contraseña: Admin123!
+    'activo'
+);
+
+-- Asignar rol Administrador al usuario admin
+INSERT INTO usuarios_roles (id_usuario, id_rol)
+VALUES (1, 1);
+3. Notas importantes
+El hash que puse ($2a$10$wH3T7jkfP1n6oY5ScJuEtu2Z/jKTfPjmfqDRysQZzM/1um1V5tSOG) es bcrypt con coste 10 para la contraseña Admin123!.
+
+Cuando implementes el login en C#, usarías BCrypt.Verify para validar la contraseña contra este hash.
+
+Ya tienes creado:
+
+1 usuario administrador (admin / Admin123!)
+
+1 rol administrador con permisos
+
+1 módulo de ejemplo
+
+3 permisos básicos asignados al rol administrador.

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:handlers="clr-namespace:CBA_app.Handlers"
+             x:Class="CBA_app.Templates.FlyoutHeader">
+
+    <Frame Padding="0" HasShadow="False" CornerRadius="0" Margin="0">
+       
+        <Grid RowDefinitions="*,40,40"
+      ColumnDefinitions="20,70,*">
+
+            <Image 
+        Grid.Row="0"
+        Grid.Column="0"
+        Grid.RowSpan="3"
+        Grid.ColumnSpan="3"
+        Source="headerflyout.png" />
+
+            <StackLayout
+        Grid.Column="3"
+        Grid.Row="1"
+        Grid.RowSpan="1"
+        VerticalOptions="CenterAndExpand">
+                <StackLayout Orientation="Horizontal">
+                    <Frame
+                CornerRadius="50"
+                BackgroundColor="White"
+                Margin="0"
+                Padding="0"
+                BorderColor="{StaticResource Primary}"
+                ZIndex="1">
+                        <HorizontalStackLayout>
+                            <ImageButton 
+                    x:Name="ImagePerfil"
+                    Source="perfil.png"
+                    WidthRequest="70"
+                    HeightRequest="70"
+                    Clicked="ImagePerfil_Clicked"/>
+
+                        </HorizontalStackLayout>
+
+                    </Frame>
+                    <Frame
+            CornerRadius="0"
+            BackgroundColor="White"
+            Margin="-9"
+            WidthRequest="5"
+            HeightRequest="48"
+            Padding="0"
+            BorderColor="White"
+            ZIndex="1"></Frame>
+                    <Frame HeightRequest="50" Margin="-20,0,3,0" Padding="0"  BorderColor="{StaticResource Primary}"  HorizontalOptions="FillAndExpand" BackgroundColor="White" >
+                        <Label x:Name="lblUserName" Text="  José Rolón " Margin="20,0,0,0" VerticalOptions="Center"/>
+                    </Frame>
+                </StackLayout>
+            </StackLayout>
+
+        </Grid>
+    </Frame>
+</ContentView>

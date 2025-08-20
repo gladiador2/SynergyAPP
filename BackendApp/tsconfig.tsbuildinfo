@@ -1,0 +1,1 @@
+{"root":["./app.ts","./db.ts","./middleware/authmiddleware.ts","./routes/authroute.ts","./routes/testroute.ts"],"version":"5.9.2"}

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CBA_app.Views.RegistroVisitantes.Movimientos.VisitantesEntradaPage"
+             Title="Registro de Entrada">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <VerticalStackLayout Padding="5" Spacing="5">
+            <Frame HasShadow="true" BorderColor="White">
+                <StackLayout Margin="-10">
+                    <Label Text="Buscar visitante" HorizontalTextAlignment="Center" FontAttributes="Bold"></Label>
+                    <StackLayout Orientation="Horizontal" >
+                        <Label Text="Medio de transporte:" HorizontalTextAlignment="Center" VerticalOptions="Center"></Label>
+
+                        <Switch x:Name="mySwitch" IsToggled="True" />
+                        <Label VerticalOptions="Center" Margin="5,0,0,0">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding Source={x:Reference mySwitch}, Path=IsToggled}" Value="True">
+                                    <Setter Property="Text" Value="Vehículo" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding Source={x:Reference mySwitch}, Path=IsToggled}" Value="False">
+                                    <Setter Property="Text" Value="A pie" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </StackLayout>
+                    <Entry Placeholder="Chapa del vehículo" PlaceholderColor="DarkGray" Keyboard="Text" x:Name="txtBuscador">
+                        <Entry.Triggers>
+                            <DataTrigger TargetType="Entry" Binding="{Binding Source={x:Reference mySwitch}, Path=IsToggled}" Value="False">
+                                <Setter Property="Placeholder" Value="Numero de documento" />
+                                <Setter Property="Keyboard" Value="Numeric" />
+                            </DataTrigger>
+                        </Entry.Triggers>
+                    </Entry>
+                    <Button Text="Registrar entrada"  BackgroundColor="{StaticResource quaternary}" Clicked="Button_Clicked" TextColor="Black" BorderWidth="1" BorderColor="#75FF5C" CornerRadius="15" LineBreakMode="WordWrap" Visual="Default"/>
+
+                </StackLayout>
+
+            </Frame>
+          
+            
+        </VerticalStackLayout>
+       
+    </Grid>
+  
+</ContentPage>

@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:converters="clr-namespace:CBA_app.Services"
+	xmlns:handlers="clr-namespace:CBA_app.Handlers"
+	xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="CBA_app.Views.OrdenServicio.VerificacionPage"
+             Title="Verificación">
+    <ContentPage.Resources>
+        <!-- Convierte bool a flecha para expanders -->
+        <converters:BoolToArrowConverter x:Key="BoolToArrowConverter" />
+        <ResourceDictionary>
+            <!-- Convierte el valor 'Aprobado' a booleano para el Switch -->
+            <converters:AprobadoToBoolConverter x:Key="AprobadoToBoolConverter" />
+            <!-- Convierte el valor 'Aprobado' a 'Si' o 'N' para el Label -->
+            <converters:AprobadoToSiNoConverter x:Key="AprobadoToSiNoConverter" />
+            <converters:CanalAsignadoToBoolConverter x:Key="CanalAsignadoToBoolConverter" />
+            <converters:TipoImpExpToBoolConverter x:Key="TipoImpExpToBoolConverter" />
+            <converters:TimeStringConverter x:Key="TimeStringConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <!-- #region Barra de herramientas -->
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Imprimir"
+                  IconImageSource="imprimir.png"
+                  Order="Primary"
+                  Priority="0"
+                  Clicked="ToolbarItem_Clicked" />
+    </ContentPage.ToolbarItems>
+    <!-- #endregion -->
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="10" Spacing="8">
+                <Frame Padding="-1" CornerRadius="10">
+                    <toolkit:Expander ExpandedChanged="Expander_ExpandedChanged">
+                        <toolkit:Expander.Header>
+                            <Frame Margin="0" Padding="0" HasShadow="True" CornerRadius="0" BorderColor="Transparent">
+                                <Frame.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#ffa255" Offset="0.0" />
+                                        <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </Frame.Background>
+                                <StackLayout Padding="10">
+                                    <Grid>
+                                        <Label Text="Principal" FontSize="Large" TextColor="White" />
+                                        <Label FontSize="Large" TextColor="White" 
+                            HorizontalOptions="End"
+                            VerticalOptions="Center"
+                            Text="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Expander}}, Path=IsExpanded, Converter={StaticResource BoolToArrowConverter}}" />
+                                    </Grid>
+                                </StackLayout>
+                            </Frame>
+                        </toolkit:Expander.Header>
+                        <Frame  BorderColor="Transparent" BackgroundColor="White" HasShadow="True" Margin="10,10,10,10" CornerRadius="10">
+                            <Frame.Shadow>
+                                <Shadow Brush="#80000000" Opacity="0.7" Offset="0,8" Radius="18" />
+                            </Frame.Shadow>
+                            <VerticalStackLayout>
+                                <Grid>
+                                    <Label Text="  Consignatario  "  Margin="15,0,0,0" ZIndex="1" TextColor="{StaticResource Secondary}" BackgroundColor="White" VerticalOptions="Start" HorizontalOptions="Start"/>
+                                    <!-- El Frame ocupa toda la celda -->
+                                    <Frame Padding="5,0,5,0" Margin="0,8"  CornerRadius="0">
+                                        <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding CONSIGNATARIO}" IsReadOnly="True"/>
+                                    </Frame>
+                                </Grid>
+                                <Grid ColumnSpacing="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0" >
+                                        <Label Text="  Fecha Emisión  "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Center" BackgroundColor="White"/>
+                                        <!-- El Frame ocupa toda la celda -->
+                                        <Frame Padding="5,0,5,0" Margin="0,8"  CornerRadius="0">
+                                            <DatePicker Date="{Binding FechaEmision}"   VerticalOptions="Start" HorizontalOptions="Center"/>
+                                        </Frame>
+                                    </Grid>
+                                    <Grid Grid.Column="1" >
+                                        <Label Text="  Reporte Número  "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Center" BackgroundColor="White"/>
+                                        <!-- El Frame ocupa toda la celda -->
+                                        <Frame Padding="5,0,5,0" Margin="0,8"  CornerRadius="0">
+                                            <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding REPORTE_NUMERO}" HorizontalOptions="Center" Placeholder="Número de reporte"/>
+                                        </Frame>
+                                    </Grid>
+                                    <Grid Grid.Column="0" Grid.Row="1" >
+                                        <Label Text="  Hoja Número  "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Center" BackgroundColor="White"/>
+                                        <!-- El Frame ocupa toda la celda -->
+                                        <Frame Padding="5,0,5,0" Margin="0,8"  CornerRadius="0">
+                                            <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding HOJA_NUMERO}" Keyboard="Numeric" HorizontalOptions="Center" Placeholder="  Hoja Número  "/>
+                                        </Frame>
+                                    </Grid>
+                                </Grid>
+                                <Grid>
+                                    <Label Text="  Tipo  " Margin="15,0,0,0" ZIndex="1" TextColor="{StaticResource Secondary}" BackgroundColor="White" VerticalOptions="Start" HorizontalOptions="Start"/>
+                                    <Frame Margin="0,8" CornerRadius="0">
+                                        <Grid Margin="5,0,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <VerticalStackLayout Grid.Column="0">
+                                                <RadioButton
+                    Content="Imp. Fluvial"
+                    GroupName="tipo"
+                    IsChecked="{Binding TIPO_IMP_EXP, Converter={StaticResource TipoImpExpToBoolConverter}, ConverterParameter=Imp. Fluvial, Mode=TwoWay}" />
+                                                <RadioButton
+                    Content="Exp. Fluvial"
+                    GroupName="tipo"
+                    IsChecked="{Binding TIPO_IMP_EXP, Converter={StaticResource TipoImpExpToBoolConverter}, ConverterParameter=Exp. Fluvial, Mode=TwoWay}" />
+                                            </VerticalStackLayout>
+                                            <VerticalStackLayout Grid.Column="1">
+                                                <RadioButton
+                    Content="Imp. Terrestre"
+                    GroupName="tipo"
+                    IsChecked="{Binding TIPO_IMP_EXP, Converter={StaticResource TipoImpExpToBoolConverter}, ConverterParameter=Imp. Terrestre, Mode=TwoWay}" />
+                                                <RadioButton
+                    Content="Otro"
+                    GroupName="tipo"
+                    IsChecked="{Binding TIPO_IMP_EXP, Converter={StaticResource TipoImpExpToBoolConverter}, ConverterParameter=Otro, Mode=TwoWay}" />
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </Frame>
+                                </Grid>
+                                <Grid ColumnSpacing="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0" >
+                                        <Label Text="  Despacho Nº./Exp. Nº  "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Center" BackgroundColor="White"/>
+                                        <!-- El Frame ocupa toda la celda -->
+                                        <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                            <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding DESPACHO_NUMERO}"  HorizontalOptions="Center" Placeholder="Despacho Nº./Exp. Nº"/>
+                                        </Frame>
+                                    </Grid>
+                                    <Grid Grid.Column="1" >
+                                        <Label Text="  Orden de Servicio Nº  "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Center" BackgroundColor="White"/>
+                                        <!-- El Frame ocupa toda la celda -->
+                                        <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                            <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding ORDEN_SERVICIO}" HorizontalOptions="Center" Placeholder="Orden de Servicio Nº"/>
+                                        </Frame>
+                                    </Grid>
+                                </Grid>
+                                <Grid>
+                                    <Label Text="  Canal Asignado "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Start" Margin="15,0" BackgroundColor="White"/>
+                                    <Frame  Margin="0,8"  CornerRadius="0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <RadioButton
+Content="Naranja"
+TextColor="Orange"
+GroupName="CanalAsignado"
+Grid.Column="0"
+IsChecked="{Binding CANAL_ASIGNADO, Converter={StaticResource CanalAsignadoToBoolConverter}, ConverterParameter=Naranja, Mode=TwoWay}" />
+                                            <RadioButton
+Content="Rojo"
+TextColor="Red"
+GroupName="CanalAsignado"
+Grid.Column="1"
+IsChecked="{Binding CANAL_ASIGNADO, Converter={StaticResource CanalAsignadoToBoolConverter}, ConverterParameter=Rojo, Mode=TwoWay}" />
+                                            <RadioButton
+Content="Verde"
+TextColor="Green"
+GroupName="CanalAsignado"
+Grid.Column="2"
+IsChecked="{Binding CANAL_ASIGNADO, Converter={StaticResource CanalAsignadoToBoolConverter}, ConverterParameter=Verde, Mode=TwoWay}" />
+                                        </Grid>
+                                    </Frame>
+                                </Grid>
+                                <Grid ColumnSpacing="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0" >
+                                        <Label Text="  CTO Num  "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Center" BackgroundColor="White"/>
+                                        <!-- El Frame ocupa toda la celda -->
+                                        <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                            <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding CTO_NUM}"  HorizontalOptions="Center" HorizontalTextAlignment="Center" Placeholder="  CTO Num  "/>
+                                        </Frame>
+                                    </Grid>
+                                    <Grid Grid.Column="1" >
+                                        <Label Text="  B/M  "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Center" BackgroundColor="White"/>
+                                        <!-- El Frame ocupa toda la celda -->
+                                        <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                            <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding BM}" HorizontalOptions="Center" Placeholder="B/M" HorizontalTextAlignment="Center"/>
+                                        </Frame>
+                                    </Grid>
+                                    <Grid Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" >
+                                        <Label Text="  Reg.Ent. N°  "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Start" Margin="15,0" BackgroundColor="White"/>
+                                        <!-- El Frame ocupa toda la celda -->
+                                        <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                            <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding REG_ENT_NUM}" Placeholder="Reg.Ent. N°" HorizontalTextAlignment="Start"/>
+                                        </Frame>
+                                    </Grid>
+                                </Grid>
+                                <Grid ColumnSpacing="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Column="0" >
+                                        <Label Text="  Número Acta  "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Center" BackgroundColor="White"/>
+                                        <!-- El Frame ocupa toda la celda -->
+                                        <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                            <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding NUM_ACTA}"  HorizontalTextAlignment="Center" Placeholder="  Número Acta  "/>
+                                        </Frame>
+                                    </Grid>
+                                    <Grid Grid.Column="1" >
+                                        <Label Text="  Fecha Ingreso "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Center" BackgroundColor="White"/>
+                                        <!-- El Frame ocupa toda la celda -->
+                                        <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                            <DatePicker Date="{Binding FECHA_INGRESO}"   VerticalOptions="Start" HorizontalOptions="Center"/>
+                                        </Frame>
+                                    </Grid>
+                                    <Grid Grid.Column="0" Grid.Row="1" >
+                                        <Label Text="  Hora Inicio  "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Center" BackgroundColor="White"/>
+                                        <!-- El Frame ocupa toda la celda -->
+                                        <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                            <TimePicker
+    Time="{Binding HORA_INICIO, Converter={StaticResource TimeStringConverter}, Mode=TwoWay}"
+    Format="HH:mm"
+                                                Margin="5,0,0,0"
+    HorizontalOptions="Center"
+    VerticalOptions="Center" />
+                                        </Frame>
+                                    </Grid>
+                                    <Grid Grid.Column="1" Grid.Row="1" >
+                                        <Label Text="  Hora Finalizado  "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Center" BackgroundColor="White"/>
+                                        <!-- El Frame ocupa toda la celda -->
+                                        <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                            <TimePicker
+Time="{Binding HORA_FINALIZADO, Converter={StaticResource TimeStringConverter}, Mode=TwoWay}"
+Format="HH:mm"
+                                            Margin="5,0,0,0"
+HorizontalOptions="Center"
+VerticalOptions="Center" />
+                                        </Frame>
+                                    </Grid>
+                                </Grid>
+                                <Grid>
+                                    <Label Text=" Contenedor Nº/Carreta-Furgon (RUA) "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Start" Margin="15,0" BackgroundColor="White"/>
+                                    <!-- El Frame ocupa toda la celda -->
+                                    <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                        <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding CONTENEDOR_RUA}"  HorizontalTextAlignment="Start" Placeholder=" Contenedor Nº/Carreta-Furgon (RUA) "/>
+                                    </Frame>
+                                </Grid>
+                                <Grid>
+                                    <Label Text=" Precinto(s) Nro(s) Manif. "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Start" Margin="15,0" BackgroundColor="White"/>
+                                    <!-- El Frame ocupa toda la celda -->
+                                    <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                        <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding PRECINTOS_MANIF}"  HorizontalTextAlignment="Start" Placeholder=" Precinto(s) Nro(s) Manif. "/>
+                                    </Frame>
+                                </Grid>
+                                <Grid>
+                                    <Label Text=" Cant. Manif/Tipo Embal. "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Start" Margin="15,0" BackgroundColor="White"/>
+                                    <!-- El Frame ocupa toda la celda -->
+                                    <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                        <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding CANT_MANIF_TIPO_EMBALAJE}"  HorizontalTextAlignment="Start" Placeholder=" Cant. Manif/Tipo Embal. "/>
+                                    </Frame>
+                                </Grid>
+                                <Grid>
+                                    <Label Text=" Peso Merc. Manif. "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Start" Margin="15,0" BackgroundColor="White"/>
+                                    <!-- El Frame ocupa toda la celda -->
+                                    <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                        <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding PESO_MERC_MANIF}"  HorizontalTextAlignment="Start"  Placeholder=" Peso Merc. Manif. "/>
+                                    </Frame>
+                                </Grid>
+                                <Grid>
+                                    <Label Text=" Cierre Precintado "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Start" Margin="15,0" BackgroundColor="White"/>
+                                    <!-- El Frame ocupa toda la celda -->
+                                    <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                        <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding CIERRE_PRECINTADO}"  HorizontalTextAlignment="Start"  Placeholder=" Cierre Precintado "/>
+                                    </Frame>
+                                </Grid>
+                                <Grid>
+                                    <Label Text=" Cant Verif Tipo Embalaje "  ZIndex="1" TextColor="{StaticResource Secondary}" VerticalOptions="Start" HorizontalOptions="Start" Margin="15,0" BackgroundColor="White"/>
+                                    <!-- El Frame ocupa toda la celda -->
+                                    <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                        <handlers:BorderlessEntry Margin="5,0,0,0" Text="{Binding CANT_VERIF_TIPO_EMBALAJE}"  HorizontalTextAlignment="Start" Placeholder=" Cant Verif Tipo Embalaje "/>
+                                    </Frame>
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </toolkit:Expander>
+                </Frame>
+                <Frame Padding="-1" CornerRadius="10">
+                    <toolkit:Expander ExpandedChanged="Expander_ExpandedChanged">
+                        <toolkit:Expander.Header>
+                            <Frame Margin="0" Padding="0" HasShadow="True" CornerRadius="0" BorderColor="Transparent">
+                                <Frame.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#ffa255" Offset="0.0" />
+                                        <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </Frame.Background>
+                                <StackLayout Padding="10">
+                                    <Grid>
+                                        <Label Text="Items Verificaciones" FontSize="Large" TextColor="White" />
+                                        <Label FontSize="Large" TextColor="White" HorizontalOptions="End" VerticalOptions="Center" Text="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Expander}}, Path=IsExpanded, Converter={StaticResource BoolToArrowConverter}}" />
+                                    </Grid>
+                                </StackLayout>
+                            </Frame>
+                        </toolkit:Expander.Header>
+                        <Frame BorderColor="Transparent" BackgroundColor="White" HasShadow="True" Margin="10,10,10,10" CornerRadius="10">
+                            <Frame.Shadow>
+                                <Shadow Brush="#80000000" Opacity="0.7" Offset="0,8" Radius="18" />
+                            </Frame.Shadow>
+                            <VerticalStackLayout>
+                                <Grid>
+                                    <Label Text=" Dice Contener " Margin="15,0"  ZIndex="1" TextColor="{StaticResource Secondary}" HorizontalOptions="Start" VerticalOptions="Start" BackgroundColor="White"/>
+                                    <!-- El Frame ocupa toda la celda -->
+                                    <Frame Padding="0" Margin="0,8"  CornerRadius="0">
+                                        <handlers:BorderlessEntry  Margin="5,0,0,0" Text="{Binding DICE_CONTENER}" Placeholder=" Dice Contener "/>
+                                    </Frame>
+                                </Grid>
+                                <Grid>
+                                    <Label Text=" Precinto Apertura " Margin="15,0"  ZIndex="1" TextColor="{StaticResource Secondary}" HorizontalOptions="Start" VerticalOptions="Start" BackgroundColor="White"/>
+                                    <Frame Padding="6,-3,3,3" Margin="0,8">
+                                        <handlers:BorderlessEditor Text="{Binding PRECINTO_APERTURA}"  Placeholder="Precinto Apertura..."  HeightRequest="200"/>
+                                    </Frame>
+                                </Grid>
+                                <Grid>
+                                    <Label Text="Cajas / Bultos dañadas " Margin="15,0" HorizontalOptions="Start" VerticalOptions="Start" BackgroundColor="White" ZIndex="1" TextColor="{StaticResource Secondary}"/>
+                                    <Frame Padding="5,0,5,0" Margin="0,5,0,5">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <HorizontalStackLayout Grid.Row="1" Grid.Column="0">
+                                                <Label Text="Aprobado" VerticalTextAlignment="Center"/>
+                                                <Switch  IsToggled="{Binding CAJAS_DANIADAS_APROBADO, Converter={StaticResource AprobadoToBoolConverter}}"/>
+                                                <Label IsVisible="False" Text="{Binding CAJAS_DANIADAS_APROBADO, Converter={StaticResource AprobadoToSiNoConverter}}" />
+                                            </HorizontalStackLayout>
+                                            <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
+                                                <Entry Text="{Binding CAJAS_DANIADAS}"  WidthRequest="80" HorizontalTextAlignment="Center"/>
+                                                <Stepper Value="{Binding CAJAS_DANIADAS, Mode=TwoWay}" Minimum="0" Maximum="1000" Increment="1" WidthRequest="100" HeightRequest="40" HorizontalOptions="Start" VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                    </Frame>
+                                </Grid>
+                                <Grid>
+                                    <Label Text="Cajas /  Bultos Abiertos " Margin="15,0" HorizontalOptions="Start" VerticalOptions="Start" BackgroundColor="White" ZIndex="1" TextColor="{StaticResource Secondary}"/>
+                                    <Frame Padding="5,0,5,0" Margin="0,5,0,5">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <HorizontalStackLayout Grid.Row="1" Grid.Column="0">
+                                                <Label Text="Aprobado" VerticalTextAlignment="Center"/>
+                                                <Switch  IsToggled="{Binding CAJAS_ABIERTAS_APROBADO, Converter={StaticResource AprobadoToBoolConverter}}"/>
+                                                <Label IsVisible="False" Text="{Binding CAJAS_ABIERTAS_APROBADO, Converter={StaticResource AprobadoToSiNoConverter}}" />
+                                            </HorizontalStackLayout>
+                                            <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
+                                                <Entry Text="{Binding CAJAS_ABIERTAS}" Keyboard="Numeric" WidthRequest="80" HorizontalTextAlignment="Center"/>
+                                                <Stepper Value="{Binding CAJAS_ABIERTAS, Mode=TwoWay}" Minimum="0" Maximum="1000" Increment="1" WidthRequest="100" HeightRequest="40" HorizontalOptions="Start" VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                    </Frame>
+                                </Grid>
+                                <Grid>
+                                    <Label Text="Retiro de muestras" Margin="15,0" HorizontalOptions="Start" VerticalOptions="Start" BackgroundColor="White" ZIndex="1" TextColor="{StaticResource Secondary}"/>
+                                    <Frame Padding="5,0,5,0" Margin="0,5,0,5">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <HorizontalStackLayout Grid.Row="1" Grid.Column="0">
+                                                <Label Text="Aprobado" VerticalTextAlignment="Center"/>
+                                                <Switch  IsToggled="{Binding RETIRO_MUESTRAS_APROBADO, Converter={StaticResource AprobadoToBoolConverter}}"/>
+                                                <Label IsVisible="False" Text="{Binding RETIRO_MUESTRAS_APROBADO, Converter={StaticResource AprobadoToSiNoConverter}}" />
+                                            </HorizontalStackLayout>
+                                            <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
+                                                <Entry Text="{Binding RETIRO_MUESTRAS}" Keyboard="Numeric" WidthRequest="80" HorizontalTextAlignment="Center"/>
+                                                <Stepper Value="{Binding RETIRO_MUESTRAS, Mode=TwoWay}" Minimum="0" Maximum="1000" Increment="1" WidthRequest="100" HeightRequest="40" HorizontalOptions="Start" VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                    </Frame>
+                                </Grid>
+                                <Grid>
+                                    <Label Text="Se realizo conteo " Margin="15,0" HorizontalOptions="Start" VerticalOptions="Start" BackgroundColor="White" ZIndex="1" TextColor="{StaticResource Secondary}"/>
+                                    <Frame Padding="5,0,5,0" Margin="0,5,0,5">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <HorizontalStackLayout Grid.Row="1" Grid.Column="0">
+                                                <Label Text="Aprobado" VerticalTextAlignment="Center"/>
+                                                <Switch  IsToggled="{Binding CONTEO_APROBADO, Converter={StaticResource AprobadoToBoolConverter}}"/>
+                                                <Label IsVisible="False" Text="{Binding CONTEO_APROBADO, Converter={StaticResource AprobadoToSiNoConverter}}" />
+                                            </HorizontalStackLayout>
+                                            <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
+                                                <Entry Text="{Binding CONTEO_CANTIDAD}" Keyboard="Numeric" WidthRequest="80" HorizontalTextAlignment="Center"/>
+                                                <Stepper Value="{Binding CONTEO_CANTIDAD, Mode=TwoWay}" Minimum="0" Maximum="1000" Increment="1" WidthRequest="100" HeightRequest="40" HorizontalOptions="Start" VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                    </Frame>
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </toolkit:Expander>
+                </Frame>
+                <Frame Padding="-1" CornerRadius="10">
+                    <toolkit:Expander ExpandedChanged="Expander_ExpandedChanged">
+                        <toolkit:Expander.Header>
+                            <Frame Margin="0" Padding="0" HasShadow="True" CornerRadius="0" BorderColor="Transparent">
+                                <Frame.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#ffa255" Offset="0.0" />
+                                        <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </Frame.Background>
+                                <StackLayout Padding="10">
+                                    <Grid>
+                                        <Label Text="Obs." FontSize="Large" TextColor="White" />
+                                        <Label FontSize="Large" TextColor="White" HorizontalOptions="End" VerticalOptions="Center" Text="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Expander}}, Path=IsExpanded, Converter={StaticResource BoolToArrowConverter}}" />
+                                    </Grid>
+                                </StackLayout>
+                            </Frame>
+                        </toolkit:Expander.Header>
+                        <Frame BorderColor="Transparent" BackgroundColor="White" HasShadow="True" Margin="10,10,10,10" CornerRadius="10">
+                            <Frame.Shadow>
+                                <Shadow Brush="#80000000" Opacity="0.7" Offset="0,8" Radius="18" />
+                            </Frame.Shadow>
+                            <VerticalStackLayout>
+                                <Grid>
+                                    <Label Text=" Observaciones" Margin="15,0"  ZIndex="1" TextColor="{StaticResource Secondary}" HorizontalOptions="Start" VerticalOptions="Start" BackgroundColor="White"/>
+                                    <Frame Padding="6,-3,3,3" Margin="0,8">
+                                        <handlers:BorderlessEditor Text="{Binding OBSERVACIONES}" x:Name="editorObs" Placeholder="Observaciones..."  HeightRequest="200"></handlers:BorderlessEditor>
+                                    </Frame>
+                                </Grid>
+                                <Grid>
+                                    <Label Text=" Precinto Cierre " Margin="15,0"  ZIndex="1" TextColor="{StaticResource Secondary}" HorizontalOptions="Start" VerticalOptions="Start" BackgroundColor="White"/>
+                                    <Frame Padding="6,-3,3,3" Margin="0,8">
+                                        <handlers:BorderlessEditor Text="{Binding PRECINTO_CIERRE}"  Placeholder="Precinto Cierre..."  HeightRequest="200"/>
+                                    </Frame>
+                                </Grid>
+                                <HorizontalStackLayout>
+                                    <CheckBox  IsChecked="{Binding SOBRE_CARRETA_CLIENTE, Converter={StaticResource AprobadoToBoolConverter}}"/>
+                                    <Label IsVisible="False" Text="{Binding SOBRE_CARRETA_CLIENTE, Converter={StaticResource AprobadoToSiNoConverter}}" />
+                                    <Label Text="Sobre Carreta Cliente/ Transp. en Anden" VerticalTextAlignment="Center" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout>
+                                    <CheckBox  IsChecked="{Binding SOBRE_CARRETA_PSF, Converter={StaticResource AprobadoToBoolConverter}}"/>
+                                    <Label IsVisible="False" Text="{Binding SOBRE_CARRETA_PSF, Converter={StaticResource AprobadoToSiNoConverter}}" />
+                                    <Label Text="Sobre Carreta PSF" VerticalTextAlignment="Center" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout>
+                                    <CheckBox  IsChecked="{Binding EN_ANDEN, Converter={StaticResource AprobadoToBoolConverter}}"/>
+                                    <Label IsVisible="False" Text="{Binding EN_ANDEN, Converter={StaticResource AprobadoToSiNoConverter}}" />
+                                    <Label Text="En Anden" VerticalTextAlignment="Center" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout>
+                                    <CheckBox  IsChecked="{Binding EN_ANDEN_CNTR, Converter={StaticResource AprobadoToBoolConverter}}"/>
+                                    <Label IsVisible="False" Text="{Binding EN_ANDEN_CNTR, Converter={StaticResource AprobadoToSiNoConverter}}" />
+                                    <Label Text="En Anden (cntr) " VerticalTextAlignment="Center" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout>
+                                    <CheckBox  IsChecked="{Binding DEPOSITO_ABC, Converter={StaticResource AprobadoToBoolConverter}}"/>
+                                    <Label IsVisible="False" Text="{Binding DEPOSITO_ABC, Converter={StaticResource AprobadoToSiNoConverter}}" />
+                                    <Label Text=" Deposito A-B-C " VerticalTextAlignment="Center" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout>
+                                    <CheckBox  IsChecked="{Binding AREA_CNTR, Converter={StaticResource AprobadoToBoolConverter}}"/>
+                                    <Label IsVisible="False" Text="{Binding AREA_CNTR, Converter={StaticResource AprobadoToSiNoConverter}}" />
+                                    <Label Text="Área Cntr" VerticalTextAlignment="Center" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout>
+                                    <CheckBox  IsChecked="{Binding PRE_ESTIBA, Converter={StaticResource AprobadoToBoolConverter}}"/>
+                                    <Label IsVisible="False" Text="{Binding PRE_ESTIBA, Converter={StaticResource AprobadoToSiNoConverter}}" />
+                                    <Label Text="Pre-estiba" VerticalTextAlignment="Center" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout>
+                                    <CheckBox  IsChecked="{Binding AREA_VEHIC, Converter={StaticResource AprobadoToBoolConverter}}"/>
+                                    <Label IsVisible="False" Text="{Binding AREA_VEHIC, Converter={StaticResource AprobadoToSiNoConverter}}" />
+                                    <Label Text="Área Vehic." VerticalTextAlignment="Center" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout>
+                                    <CheckBox  IsChecked="{Binding OTRO_CAMPO, Converter={StaticResource AprobadoToBoolConverter}}"/>
+                                    <Label IsVisible="False" Text="{Binding OTRO_CAMPO, Converter={StaticResource AprobadoToSiNoConverter}}" />
+                                    <Label Text="Otro" VerticalTextAlignment="Center" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </toolkit:Expander>
+                </Frame>
+            </VerticalStackLayout>
+        </ScrollView>
+        <!-- #region Botones Guardar y Finalizar -->
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <!-- Botón Guardar -->
+            <Button x:Name="btnGuardar" Grid.Column="0" Grid.ColumnSpan="2"
+             Text="💾 Guardar Acta"
+             Clicked="btnGuardar_Clicked"
+             Margin="5,0,5,0">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#ae49ff" Offset="0.0" />
+                        <GradientStop Color="{StaticResource Secondary}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Button.Background>
+                <Button.Shadow>
+                    <Shadow Brush="Gray" Opacity="0.5" Offset="2,2" Radius="10" />
+                </Button.Shadow>
+            </Button>
+        </Grid>
+        <!-- #endregion -->
+    </Grid>
+</ContentPage>

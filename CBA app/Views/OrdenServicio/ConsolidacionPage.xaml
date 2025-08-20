@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:CBA_app.Services"
+             xmlns:handlers="clr-namespace:CBA_app.Handlers"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="CBA_app.Views.OrdenServicio.ConsolidacionPage"
+             Title="Consolidación">
+    <ContentPage.Resources>
+        <!-- Convierte bool a flecha para expanders -->
+        <converters:BoolToArrowConverter x:Key="BoolToArrowConverter" />
+
+        <ResourceDictionary>
+            <!-- Convierte el valor 'Aprobado' a booleano para el Switch -->
+            <converters:AprobadoToBoolConverter x:Key="AprobadoToBoolConverter" />
+            <!-- Convierte el valor 'Aprobado' a 'Si' o 'N' para el Label -->
+            <converters:AprobadoToSiNoConverter x:Key="AprobadoToSiNoConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="8">
+            <Frame Padding="-1" CornerRadius="10">
+                <toolkit:Expander ExpandedChanged="Expander_ExpandedChanged">
+                    <toolkit:Expander.Header>
+
+                        <Frame Margin="0" Padding="0" HasShadow="True" CornerRadius="0" BorderColor="Transparent">
+                            <Frame.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#ffa255" Offset="0.0" />
+                                    <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Frame.Background>
+                            <StackLayout Padding="10">
+                                <Grid>
+                                    <Label Text="Principal" FontSize="Large" TextColor="White" />
+                                    <Label FontSize="Large" TextColor="White" 
+                        HorizontalOptions="End"
+                        VerticalOptions="Center"
+                        Text="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Expander}}, Path=IsExpanded, Converter={StaticResource BoolToArrowConverter}}" />
+                                </Grid>
+                            </StackLayout>
+                        </Frame>
+                    </toolkit:Expander.Header>
+                    <Frame BorderColor="Transparent" BackgroundColor="White" HasShadow="True" Margin="10,10,10,10" CornerRadius="10">
+                        <Frame.Shadow>
+                            <Shadow Brush="#80000000" Opacity="0.7" Offset="0,8" Radius="18" />
+                        </Frame.Shadow>
+                        <VerticalStackLayout>
+
+                            
+                            <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+                                <Label Text="Fecha Ingreso:" />
+                                <Entry Text="{Binding FECHA_INGRESO, StringFormat='{0:yyyy-MM-dd}'}" />
+                            </VerticalStackLayout>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                
+
+                                <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                                    <Label Text="Hora Inicio:" />
+                                    <Entry Text="{Binding HORA_INICIO}" />
+
+                                </VerticalStackLayout>
+                                <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                                    <Label Text="Hora Finalizado:" />
+                                    <Entry Text="{Binding HORA_FINALIZADO}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                            <Frame Padding="1" Margin="0,5,0,5">
+                                <Grid >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <VerticalStackLayout Grid.Column="0">
+                                        <RadioButton Content="Carga FCL"  GroupName="Carga" />
+
+
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1">
+                                        <RadioButton Content="LCL"  GroupName="Carga" />
+
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Frame>
+                            <Frame Padding="1" Margin="0,5,0,5">
+                                <Grid >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <VerticalStackLayout Grid.Column="0">
+                                        <RadioButton Content="Imp. Fluvial"  GroupName="tipo" />
+                                        <RadioButton Content="Traslado otro PTC"  GroupName="tipo" />
+
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1">
+                                        <RadioButton Content="Imp. Terrestre"  GroupName="tipo" />
+                                        <RadioButton Content="Otro"  GroupName="tipo" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Frame>
+                            <Frame Padding="1" Margin="0,5,0,5">
+                                <Grid >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Label Text="Regimen aduanero" Grid.Row="0" HorizontalTextAlignment="Center"/>
+                                    <VerticalStackLayout Grid.Column="0" Grid.Row="1">
+                                        <RadioButton Content="IC 03Normal"  GroupName="regimen" />
+
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1" Grid.Row="1">
+                                        <RadioButton Content="LCL"  GroupName="regimen" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Frame>
+                            <Label Text="Trabajos Realizados" />
+
+                            <Frame Padding="6,-3,3,3">
+                                <handlers:BorderlessEditor IsReadOnly="{Binding IsReadOnly}" x:Name="editorTrabajos" Placeholder="Trabajos Realizados..."  HeightRequest="200">
+                                </handlers:BorderlessEditor>
+                            </Frame>
+                            
+                            <Label Text="IDA3 DESPACHO N°:" />
+                            <Entry Text="{Binding DESPACHO_NUMERO}" />
+                            <Frame Padding="1" Margin="0,5,0,5">
+                                <Grid >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <VerticalStackLayout Grid.Column="0">
+                                        <RadioButton Content="Area Vehiculo"  GroupName="Area" />
+                                        <RadioButton Content="Zona Pre-Estiba /Muelle"  GroupName="Area" />
+
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1">
+                                        <RadioButton Content="Area Contenedor"  GroupName="Area" />
+                                        <RadioButton Content="otro"  GroupName="Area" />
+                                        
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Frame>
+                            <Label Text="Consignatario" />
+                            <Entry Text="{Binding CONSIGNATARIO}" />
+                       
+                        </VerticalStackLayout>
+                    </Frame>
+
+
+
+                </toolkit:Expander>
+            </Frame>
+
+
+            <Frame Padding="-1" CornerRadius="10">
+                <toolkit:Expander ExpandedChanged="Expander_ExpandedChanged">
+                    <toolkit:Expander.Header>
+                        <Frame Margin="0" Padding="0" HasShadow="True" CornerRadius="0" BorderColor="Transparent">
+                            <Frame.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#ffa255" Offset="0.0" />
+                                    <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Frame.Background>
+                            <StackLayout Padding="10">
+                                <Grid>
+                                    <Label Text="Items Consolidaciones" FontSize="Large" TextColor="White" />
+                                    <Label FontSize="Large" TextColor="White" HorizontalOptions="End" VerticalOptions="Center" Text="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Expander}}, Path=IsExpanded, Converter={StaticResource BoolToArrowConverter}}" />
+                                </Grid>
+                            </StackLayout>
+                        </Frame>
+                    </toolkit:Expander.Header>
+
+                    <Frame BorderColor="Transparent" BackgroundColor="White" HasShadow="True" Margin="10,10,10,10" CornerRadius="10">
+                        <Frame.Shadow>
+                            <Shadow Brush="#80000000" Opacity="0.7" Offset="0,8" Radius="18" />
+                        </Frame.Shadow>
+                        <VerticalStackLayout>
+                            <Label Text="Origen Mercadería" />
+                            <Entry Text="{Binding ORIGEN_MERCADERIA}" />
+
+                            <Frame Padding="1" Margin="0,5,0,5">
+                                <Grid >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Label Text="Deposito:" HorizontalTextAlignment="Center" Grid.Row="0" Grid.ColumnSpan="3"/>
+                                    <VerticalStackLayout Grid.Column="0" Grid.Row="1">
+                                        <RadioButton Content="A"  GroupName="Deposito" />
+                                        <RadioButton Content="D"  GroupName="Deposito" />
+                                        <RadioButton Content="G"  GroupName="Deposito" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1" Grid.Row="1">
+                                        <RadioButton Content="B"  GroupName="Deposito" />
+                                        <RadioButton Content="E"  GroupName="Deposito" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="2" Grid.Row="1">
+                                        <RadioButton Content="C"  GroupName="Deposito" />
+                                        <RadioButton Content="F"  GroupName="Deposito" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Frame>
+                            <Label Text="Contenedor PSF N°" />
+                            <Entry Text="{Binding CONTENEDOR_PSF}" />
+
+                            <Label Text="Camión Externo" />
+                            <Entry Text="{Binding CAMION_EXTERNO}" />
+
+                            <!--<Label Text="Dice Contener" />
+                            <Entry Text="{Binding DICE_CONTENER}" />
+
+                            <Label Text="Precinto Apertura" />
+                            <Editor Text="{Binding PRECINTO_APERTURA}" />-->
+
+
+
+                        </VerticalStackLayout>
+                    </Frame>
+
+                </toolkit:Expander>
+            </Frame>
+            <Frame Padding="-1" CornerRadius="10">
+                <toolkit:Expander ExpandedChanged="Expander_ExpandedChanged">
+                    <toolkit:Expander.Header>
+                        <Frame Margin="0" Padding="0" HasShadow="True" CornerRadius="0" BorderColor="Transparent">
+                            <Frame.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#ffa255" Offset="0.0" />
+                                    <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Frame.Background>
+                            <StackLayout Padding="10">
+                                <Grid>
+                                    <Label Text="Datos de la Consolidación" FontSize="Large" TextColor="White" />
+                                    <Label FontSize="Large" TextColor="White" HorizontalOptions="End" VerticalOptions="Center" Text="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Expander}}, Path=IsExpanded, Converter={StaticResource BoolToArrowConverter}}" />
+                                </Grid>
+                            </StackLayout>
+                        </Frame>
+                    </toolkit:Expander.Header>
+                    <Frame BorderColor="Transparent" BackgroundColor="White" HasShadow="True" Margin="10,10,10,10" CornerRadius="10">
+                        <Frame.Shadow>
+                            <Shadow Brush="#80000000" Opacity="0.7" Offset="0,8" Radius="18" />
+                        </Frame.Shadow>
+                        <VerticalStackLayout>
+
+
+                            <Frame Padding="10" Margin="0,5,0,5">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Text="Cajas / Bultos dañadas " Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
+
+
+
+                                    <HorizontalStackLayout Grid.Row="1" Grid.Column="0">
+                                        <Label Text="Aprobado" VerticalTextAlignment="Center"/>
+                                        <Switch/>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
+                                        <Entry Text="{Binding CAJAS_DANIADAS}" Keyboard="Numeric" WidthRequest="50"/>
+                                        <Stepper Value="{Binding Cant, Mode=TwoWay}" Minimum="0" Maximum="1000" Increment="1" WidthRequest="100" HeightRequest="40" HorizontalOptions="Start" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+
+                                </Grid>
+
+                            </Frame>
+
+                            <Frame Padding="10" Margin="0,5,0,5">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Text="Cajas /  Bultos Abiertos " Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
+
+
+
+                                    <HorizontalStackLayout Grid.Row="1" Grid.Column="0">
+                                        <Label Text="Aprobado" VerticalTextAlignment="Center"/>
+                                        <Switch/>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
+                                        <Entry Text="{Binding CAJAS_DANIADAS}" Keyboard="Numeric" WidthRequest="50"/>
+                                        <Stepper Value="{Binding Cant, Mode=TwoWay}" Minimum="0" Maximum="1000" Increment="1" WidthRequest="100" HeightRequest="40" HorizontalOptions="Start" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+
+                                </Grid>
+
+                            </Frame>
+                            <Frame Padding="10" Margin="0,5,0,5">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Text="Retiro de muestras" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
+
+
+
+                                    <HorizontalStackLayout Grid.Row="1" Grid.Column="0">
+                                        <Label Text="Aprobado" VerticalTextAlignment="Center"/>
+                                        <Switch/>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
+                                        <Entry Text="{Binding CAJAS_DANIADAS}" Keyboard="Numeric" WidthRequest="50"/>
+                                        <Stepper Value="{Binding Cant, Mode=TwoWay}" Minimum="0" Maximum="1000" Increment="1" WidthRequest="100" HeightRequest="40" HorizontalOptions="Start" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+
+                                </Grid>
+
+                            </Frame>
+                            <Frame Padding="10" Margin="0,5,0,5">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Text="Se realizo conteo " Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
+                                    <HorizontalStackLayout Grid.Row="1" Grid.Column="0">
+                                        <Label Text="Aprobado" VerticalTextAlignment="Center"/>
+                                        <Switch/>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
+                                        <Entry Text="{Binding CAJAS_DANIADAS}" Keyboard="Numeric" WidthRequest="50"/>
+                                        <Stepper Value="{Binding Cant, Mode=TwoWay}" Minimum="0" Maximum="1000" Increment="1" WidthRequest="100" HeightRequest="40" HorizontalOptions="Start" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+
+                                </Grid>
+
+                            </Frame>
+
+                        </VerticalStackLayout>
+                    </Frame>
+
+                </toolkit:Expander>
+            </Frame>
+            <Frame Padding="-1" CornerRadius="10">
+                <toolkit:Expander ExpandedChanged="Expander_ExpandedChanged">
+                    <toolkit:Expander.Header>
+                        <Frame Margin="0" Padding="0" HasShadow="True" CornerRadius="0" BorderColor="Transparent">
+                            <Frame.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#ffa255" Offset="0.0" />
+                                    <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </Frame.Background>
+                            <StackLayout Padding="10">
+                                <Grid>
+                                    <Label Text="Obs." FontSize="Large" TextColor="White" />
+                                    <Label FontSize="Large" TextColor="White" HorizontalOptions="End" VerticalOptions="Center" Text="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Expander}}, Path=IsExpanded, Converter={StaticResource BoolToArrowConverter}}" />
+                                </Grid>
+                            </StackLayout>
+                        </Frame>
+                    </toolkit:Expander.Header>
+                    <Frame BorderColor="Transparent" BackgroundColor="White" HasShadow="True" Margin="10,10,10,10" CornerRadius="10">
+                        <Frame.Shadow>
+                            <Shadow Brush="#80000000" Opacity="0.7" Offset="0,8" Radius="18" />
+                        </Frame.Shadow>
+                        <VerticalStackLayout>
+
+                            <Frame Padding="6,-3,3,3">
+                                <handlers:BorderlessEditor IsReadOnly="{Binding IsReadOnly}" x:Name="editorObs" Placeholder="Observaciones..."  HeightRequest="200">
+                                </handlers:BorderlessEditor>
+                            </Frame>
+
+                            <Label Text="Precinto Cierre" />
+                            <Entry Text="{Binding PRECINTO_CIERRE}" />
+                            
+
+                        </VerticalStackLayout>
+                    </Frame>
+
+                </toolkit:Expander>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

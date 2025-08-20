@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CBA_app.Views.RegistroVisitantes.RegistroVisitantesPage"
+             Title="Registro de Visitantes">
+    <ScrollView>
+        <VerticalStackLayout>
+            <ActivityIndicator x:Name="loading" HeightRequest="30" Color="Blue" IsRunning="True" 
+                IsVisible="false"/>
+            <Grid Padding="3,3,3,3" RowSpacing="10" ColumnSpacing="10">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="200"/>
+                <RowDefinition Height="200"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Frame  Padding="0" HasShadow="True"  BorderColor="LightGray" BackgroundColor="Green" Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand" CornerRadius="20" >
+                <StackLayout>
+                    <Label Text="Entrada"  TextColor="White" VerticalTextAlignment="Center"  FontAttributes="Italic,Bold" FontSize="Large"
+                    FontFamily="RobotoRegularRegular" HorizontalTextAlignment="Center"/>
+                    <ImageButton
+                    HorizontalOptions="StartAndExpand"
+                    VerticalOptions="CenterAndExpand"
+                     Source="entrada.png"
+                     BackgroundColor="Transparent"
+                     IsEnabled="True"
+                     x:Name="btnEntrada"
+                     Clicked="btnEntrada_Clicked"
+                     />
+                </StackLayout>
+            </Frame>
+            <!--<Frame  Padding="0" IsEnabled="False" HasShadow="True" BorderColor="LightGray" BackgroundColor="{StaticResource Secondary}" Grid.Column="0" Grid.Row="1" HorizontalOptions="FillAndExpand" CornerRadius="20" >
+                <StackLayout >
+                    <Label Text="En Predio" TextColor="White" VerticalTextAlignment="Center"  FontAttributes="Italic,Bold" FontSize="Large"
+                FontFamily="RobotoRegularRegular" HorizontalTextAlignment="Center"/>
+                 <ImageButton
+                HorizontalOptions="StartAndExpand"
+                VerticalOptions="CenterAndExpand"
+                 Source="en_predio.png"
+                    BackgroundColor="Transparent"
+                 IsEnabled="True"
+                    x:Name="btnEnPredio"
+                  
+                 />
+                </StackLayout>
+            </Frame>-->
+            <Frame  Padding="0" HasShadow="True" BorderColor="LightGray" BackgroundColor="Red" Grid.Column="1" Grid.Row="0" HorizontalOptions="FillAndExpand" CornerRadius="20" >
+                <StackLayout >
+                    <Label Text="Salida"  TextColor="White" VerticalTextAlignment="Center"  FontAttributes="Italic,Bold" FontSize="Large"
+                 FontFamily="RobotoRegularRegular" HorizontalTextAlignment="Center" Margin="0" Padding="0"/>
+                                    <ImageButton
+                 HorizontalOptions="StartAndExpand"
+                 VerticalOptions="CenterAndExpand"
+                  Source="salida.png"
+                     BackgroundColor="Transparent"
+                  IsEnabled="True"
+                    CornerRadius="10"
+                   x:Name="btnSalida"
+                   Clicked="btnSalida_Clicked"     
+                  />
+                </StackLayout>
+            </Frame>
+            <Frame  Padding="0" HasShadow="True" BorderColor="LightGray" BackgroundColor="{StaticResource Tertiary}" Grid.Column="1" Grid.Row="1" HorizontalOptions="FillAndExpand" CornerRadius="20" >
+                <StackLayout >
+                    <Label Text="Listado" TextColor="Black" VerticalTextAlignment="Center"  FontAttributes="Italic,Bold" FontSize="Large"
+                 FontFamily="RobotoRegularRegular" HorizontalTextAlignment="Center"/>
+                                    <ImageButton
+                 HorizontalOptions="StartAndExpand"
+                 VerticalOptions="CenterAndExpand"
+                  Source="listado.png"
+                  BackgroundColor="Transparent"
+                  IsEnabled="True"
+                  x:Name="btnListado"
+                  Clicked="btnListado_Clicked"
+                  />
+                </StackLayout>
+            </Frame>
+            
+                <Frame HasShadow="True" BorderColor="LightGray" IsVisible="false" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0" VerticalOptions="Start" >
+                    <Grid RowSpacing="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="250"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0" Text="Total entrada visitantes: " HorizontalOptions="Start" VerticalOptions="StartAndExpand" HorizontalTextAlignment="Center"></Label>
+                        <Label Grid.Row="1" Grid.Column="0" Text="Total entrada vehículo: " HorizontalOptions="Start" VerticalOptions="StartAndExpand" HorizontalTextAlignment="Center"></Label>
+                        <Label Grid.Row="2" Grid.Column="0" Text="Total en predio visitantes: " HorizontalOptions="Start" VerticalOptions="StartAndExpand" HorizontalTextAlignment="Center"></Label>
+                        <Label Grid.Row="3" Grid.Column="0" Text="Total entrada vehículo: " HorizontalOptions="Start" VerticalOptions="StartAndExpand" HorizontalTextAlignment="Center"></Label>
+                        <Label Grid.Row="0" Grid.Column="1" Text="0" HorizontalOptions="Start" VerticalOptions="StartAndExpand" HorizontalTextAlignment="Center"></Label>
+                        <Label Grid.Row="1" Grid.Column="1" Text="0" HorizontalOptions="Start" VerticalOptions="StartAndExpand" HorizontalTextAlignment="Center"></Label>
+                        <Label Grid.Row="2" Grid.Column="1" Text="0" HorizontalOptions="Start" VerticalOptions="StartAndExpand" HorizontalTextAlignment="Center"></Label>
+                        <Label Grid.Row="3" Grid.Column="1" Text="0" HorizontalOptions="Start" VerticalOptions="StartAndExpand" HorizontalTextAlignment="Center"></Label>
+
+                    </Grid>
+                </Frame>
+                <!--<StackLayout   Grid.Row="1"  Grid.Column="0" HeightRequest="39" VerticalOptions="EndAndExpand" Padding="-1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+
+                        </Grid.ColumnDefinitions>
+                        <Frame Grid.Column="0" HasShadow="True" Padding="-1" CornerRadius="0" BorderColor="Black">
+                            <Button  CornerRadius="0" Text="Entrada" BorderColor="LightGray" BorderWidth="0.1" x:Name="tabEntrada" BackgroundColor="{StaticResource Secondary}" TextColor="Black"></Button>
+
+                        </Frame>
+                        <Button Grid.Column="1" CornerRadius="0" Text="Salida" BorderColor="LightGray" BorderWidth="0.1" x:Name="tabSalida"></Button>
+                        <Button Grid.Column="2" CornerRadius="0" Text="En Predio" BorderColor="LightGray" BorderWidth="0.1" x:Name="tabEnPredio"></Button>
+                        <Button Grid.Column="3" CornerRadius="0" Text="Listado" BorderColor="LightGray" BorderWidth="0.1" x:Name="tabListado"></Button>
+
+                    </Grid>
+                </StackLayout>-->
+           
+            
+        </Grid>
+   
+        </VerticalStackLayout>
+
+        
+        
+    </ScrollView>
+       
+</ContentPage>

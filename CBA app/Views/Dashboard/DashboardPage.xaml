@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="CBA_app.Views.Dashboard.DashboardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sfChart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
+    xmlns:templates="clr-namespace:CBA_app.Templates"
+    xmlns:local="clr-namespace:CBA_app.Views.Dashboard"
+    mc:Ignorable="d">
+    <ContentPage.Content>
+        <Grid>
+            <VerticalStackLayout>
+                <Frame HasShadow="True" Padding="0" Margin="10">
+                    <sfChart:SfCartesianChart HeightRequest="200" Margin="10">
+                        <sfChart:SfCartesianChart.XAxes>
+                            <sfChart:CategoryAxis />
+                        </sfChart:SfCartesianChart.XAxes>
+                        <sfChart:SfCartesianChart.YAxes>
+                            <sfChart:NumericalAxis />
+                        </sfChart:SfCartesianChart.YAxes>
+                        <sfChart:SfCartesianChart.Series>
+                            <sfChart:ColumnSeries 
+ItemsSource="{Binding DatosGrafico}" 
+XBindingPath="Categoria" 
+YBindingPath="Valor" />
+                        </sfChart:SfCartesianChart.Series>
+                    </sfChart:SfCartesianChart>
+                </Frame>
+                <!-- Gráfico circular -->
+                <Frame HasShadow="True" Padding="0" Margin="10">
+                    <sfChart:SfCircularChart HeightRequest="200" Margin="10">
+                        <sfChart:SfCircularChart.Series>
+                            <sfChart:PieSeries 
+                ItemsSource="{Binding DatosGrafico}" 
+                XBindingPath="Categoria" 
+                YBindingPath="Valor" />
+                        </sfChart:SfCircularChart.Series>
+                    </sfChart:SfCircularChart>
+                </Frame>
+                <Frame HasShadow="True" Padding="0" Margin="10">
+                    <sfChart:SfCartesianChart HeightRequest="200" Margin="10">
+                        <sfChart:SfCartesianChart.XAxes>
+                            <sfChart:CategoryAxis />
+                        </sfChart:SfCartesianChart.XAxes>
+                        <sfChart:SfCartesianChart.YAxes>
+                            <sfChart:NumericalAxis />
+                        </sfChart:SfCartesianChart.YAxes>
+                        <sfChart:SfCartesianChart.Series>
+                            <sfChart:AreaSeries 
+            ItemsSource="{Binding DatosGrafico}" 
+            XBindingPath="Categoria" 
+            YBindingPath="Valor" />
+                        </sfChart:SfCartesianChart.Series>
+                    </sfChart:SfCartesianChart>
+                </Frame>
+
+            </VerticalStackLayout>
+            <templates:TabBarl VerticalOptions="End" ActivePage="Dashboard"/>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

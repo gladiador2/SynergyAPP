@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:VM="clr-namespace:CBA_app.ViewModels.RegistroVisitantes"
+             x:Class="CBA_app.Views.RegistroVisitantes.VisitanteVehiculos.VisitantesVehiculosPage"
+             Title="Datos del vehiculo">
+    
+        <!--<ContentPage.BindingContext>
+            <VM:VisitantesEntradaViewModel/>
+    </ContentPage.BindingContext>-->
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="#111111" StatusBarStyle="LightContent" />
+    </ContentPage.Behaviors>
+    <VerticalStackLayout>
+        <StackLayout Padding="3">
+            
+            <Frame Padding="5">
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Text="Chapa N°:" VerticalOptions="Center" Grid.Column="0" Grid.Row="0"></Label>
+                    <Entry Grid.Column="1" Text="{Binding VehiculoCHAPA}" TextChanged="txtNumeroChapa_TextChanged" x:Name="txtNumeroChapa" Placeholder="Numero de Chapa" Grid.Row="0"></Entry>
+
+                    <Label Text="Marca:" VerticalOptions="Center" Grid.Column="0" Grid.Row="1"></Label>
+                    <Entry Grid.Column="1" Text="{Binding VehiculoMARCA}" Placeholder="Marca" Grid.Row="1"></Entry>
+
+                    <Label Text="Tipo:" VerticalOptions="Center" Grid.Column="0" Grid.Row="2"></Label>
+                    <Entry Grid.Column="1" Text="{Binding VehiculoTIPO}" Placeholder="Tipo de Vehiculo" Grid.Row="2"></Entry>
+
+                    <Label Text="Obs.:" VerticalOptions="Center" Grid.Column="0" Grid.Row="3"></Label>
+                    <Entry Grid.Column="1" Text="{Binding VehiculoOBSERVACIONES}" Placeholder="Observaciónes" Grid.Row="3"></Entry>
+
+                    <Label Text="Camion:" VerticalOptions="Center" Grid.Column="0" Grid.Row="4"></Label>
+                    <Entry Grid.Column="1" Text="{Binding VehiculoCamion}" Placeholder="Camion" Grid.Row="4"></Entry>
+
+                    <Label Text="Carreta:" VerticalOptions="Center" Grid.Column="0" Grid.Row="5"></Label>
+                    <Entry Grid.Column="1" Text="{Binding VehiculoCarreta}" Placeholder="Carreta" Grid.Row="5"></Entry>
+
+                    <Label Text="Contenedor:" VerticalOptions="Center" Grid.Column="0" Grid.Row="6"></Label>
+                    <Entry Grid.Column="1" Text="{Binding VehiculoContenedor}" Placeholder="Contenedor" Grid.Row="6"></Entry>
+
+                    <Label Text="MIC/DTA:" VerticalOptions="Center" Grid.Column="0" Grid.Row="7"></Label>
+                    <Entry Grid.Column="1" Text="{Binding VehiculoMicDta}" Placeholder="MIC/DTA" Grid.Row="7"></Entry>
+
+                </Grid>
+            </Frame>
+            <Button Text="Registrar Entrada" Margin="5" CornerRadius="20" Clicked="Button_Clicked"></Button>
+        </StackLayout>
+       
+        
+        
+    </VerticalStackLayout>
+</ContentPage>

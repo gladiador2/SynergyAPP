@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CBA_app.Views.RegistroVisitantes.VisitanteVehiculos.VisitantePersonaPage"
+             Title="Registrar Ingreso">
+    <ScrollView>
+        <VerticalStackLayout Padding="5" Spacing="10">
+            <Label HorizontalTextAlignment="Center" FontAttributes="Bold" Margin="0,0,0,-10">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="Text" Value="Vehículo"></Setter>
+                        <Style.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding VehiculoCHAPA}" Value="">
+                                <Setter Property="Text" Value="Visitante sin vehículo" />
+                                <Setter Property="IsVisible" Value="false" />
+                            </DataTrigger>
+                        </Style.Triggers>
+
+                    </Style>
+                </Label.Style>
+            </Label>
+            <Frame Padding="0" HasShadow="True" BorderColor="WhiteSmoke" CornerRadius="10" Margin="5">
+                <Frame.Style>
+                    <Style TargetType="Frame">
+                        <Setter Property="IsVisible" Value="true"></Setter>
+                        <Style.Triggers>
+                            <DataTrigger TargetType="Frame" Binding="{Binding VehiculoCHAPA}" Value="">
+                                <Setter Property="IsVisible" Value="false" />
+
+                            </DataTrigger>
+                        </Style.Triggers>
+
+                    </Style>
+                </Frame.Style>
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Text="tipo" HorizontalTextAlignment="Center" Grid.Column="0" Grid.Row="0" FontSize="Micro" />
+                    <Label Text="Marca" Grid.Column="1" HorizontalTextAlignment="Center" Grid.Row="0"  FontSize="Micro"/>
+                    <Label Text="Chapa" Grid.Column="3" HorizontalTextAlignment="Center" Grid.Row="0"  FontSize="Micro" />
+                    <Label Text="{Binding VehiculoTIPO}" HorizontalTextAlignment="Center" Grid.Column="0" Grid.Row="1" />
+                    <Label Text="{Binding VehiculoMARCA}" Grid.Column="1" HorizontalTextAlignment="Center" Grid.Row="1" />
+                    <Label Text="{Binding VehiculoCHAPA}" Grid.Column="3" HorizontalTextAlignment="Center" Grid.Row="1" />
+                    <Label Text="Camion" HorizontalTextAlignment="Center" Grid.Column="0" Grid.Row="2"  FontSize="Micro"/>
+                    <Label Text="MIC/DTA" Grid.Column="1" HorizontalTextAlignment="Center" Grid.Row="2"  FontSize="Micro"/>
+                    <Label Text="Carreta" Grid.Column="3" HorizontalTextAlignment="Center" Grid.Row="2"  FontSize="Micro"/>
+                    <Label Text="{Binding VehiculoCamion}" HorizontalTextAlignment="Center" Grid.Column="0" Grid.Row="3" />
+                    <Label Text="{Binding VehiculoMicDta}" Grid.Column="1" HorizontalTextAlignment="Center" Grid.Row="3" />
+                    <Label Text="{Binding VehiculoCarreta}" Grid.Column="3" HorizontalTextAlignment="Center" Grid.Row="3" />
+                </Grid>
+            </Frame>
+            <ActivityIndicator x:Name="loading" HeightRequest="30" Color="Blue" IsRunning="True" IsVisible="false"/>
+
+            <Label Text="Visitante" HorizontalOptions="Center" FontAttributes="Bold" Margin="0,0,0,-10"/>
+
+            <Frame Margin="5" HasShadow="True" BorderColor="LightGray" Padding="10,0,10,0">
+                <StackLayout Spacing="-2">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*"/>
+
+                        </Grid.ColumnDefinitions>
+                        <Label Text="N° Documento :" VerticalOptions="Center" Grid.Column="0"/>
+                        <Entry Text="{Binding PersonaNRO_DOCUMENTO}" Keyboard="Numeric" Grid.Column="1" Placeholder="Numero de documento" TextChanged="txtDocumento_TextChanged" x:Name="txtDocumento"/>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*"/>
+
+                        </Grid.ColumnDefinitions>
+                        <Label Text="Nombre:" VerticalOptions="Center" Grid.Column="0"/>
+                        <Entry Text="{Binding PersonaNOMBRE}" Grid.Column="1" Placeholder="Nombre y Apellido"/>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*"/>
+
+                        </Grid.ColumnDefinitions>
+                        <Label Text="Empresa:" VerticalOptions="Center" Grid.Column="0"/>
+                        <Entry Grid.Column="1" Text="{Binding PersonaEMPRESA}" Placeholder="Empresa que pertenece"/>
+                    </Grid>
+                </StackLayout>
+            </Frame>
+            <StackLayout Spacing="-2">
+                <Button CornerRadius="20" Text="Registrar visita" Margin="10" x:Name="btnRegistrarVisita" Clicked="btnRegistrarVisita_Clicked"></Button>
+                <Button CornerRadius="20" Text="Finalizar" Margin="10"  x:Name="btnFinalizar" BackgroundColor="{StaticResource Secondary}" TextColor="White" Clicked="btnFinalizar_Clicked">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="IsVisible" Value="true"></Setter>
+                            <Style.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding LlegadaID}" Value="-1">
+                                    <Setter Property="IsVisible" Value="false" />
+
+                                </DataTrigger>
+
+                            </Style.Triggers>
+
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackLayout>
+            
+            <Frame Margin="5" Padding="10" HasShadow="True" BorderColor="LightGray">
+                <Frame.Style>
+                    <Style TargetType="Frame">
+                        <Setter Property="IsVisible" Value="true"></Setter>
+                        <Style.Triggers>
+                            <DataTrigger TargetType="Frame" Binding="{Binding LlegadaID}" Value="-1">
+                                <Setter Property="IsVisible" Value="false" />
+
+                            </DataTrigger>
+                        </Style.Triggers>
+
+                    </Style>
+                </Frame.Style>
+                
+                <ListView ItemsSource="{Binding ListaVisitantes}" SeparatorVisibility="Default" SeparatorColor="{StaticResource Primary}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell >
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Text="{Binding visitante_documento}" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" Grid.Column="0"></Label>
+                                    <Label Text="{Binding visitante_nombre}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" Grid.Column="1"></Label>
+                                    <Label Text="{Binding visitante_empresa}" VerticalTextAlignment="Center" HorizontalTextAlignment="End" Margin="5" Grid.Column="2"></Label>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+
+                </ListView>
+                
+            </Frame>
+        </VerticalStackLayout>
+    </ScrollView>
+    
+</ContentPage>

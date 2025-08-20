@@ -1,0 +1,559 @@
+<ContentPage
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CBA_app.Views.OrdenServicio.ServicioPage"
+	xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+	xmlns:converters="clr-namespace:CBA_app.Services"
+	xmlns:local="clr-namespace:CBA_app.Views.GIO"
+             Title="Servicios">
+    <!-- #region Recursos de la página -->
+    <ContentPage.Resources>
+        <!-- Convierte bool a flecha para expanders -->
+        <converters:BoolToArrowConverter x:Key="BoolToArrowConverter" />
+        <ResourceDictionary>
+            <!-- Convierte el valor 'Aprobado' a booleano para el Switch -->
+            <converters:AprobadoToBoolConverter x:Key="AprobadoToBoolConverter" />
+            <!-- Convierte el valor 'Aprobado' a 'Si' o 'N' para el Label -->
+            <converters:AprobadoToSiNoConverter x:Key="AprobadoToSiNoConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <!-- #endregion -->
+    <!-- #region Barra de herramientas -->
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Imprimir"
+                     IconImageSource="imprimir.png"
+                     Order="Primary"
+                     Priority="0"
+                     Clicked="ToolbarItem_Clicked" />
+    </ContentPage.ToolbarItems>
+    <!-- #endregion -->
+    <!-- #region Layout principal -->
+    <Grid RowDefinitions="*,Auto">
+        <!-- #region Indicador de carga -->
+        <ActivityIndicator x:Name="loading"
+                           HeightRequest="30"
+                           Color="Blue"
+                           IsRunning="True"
+                           IsVisible="false" />
+        <!-- #endregion -->
+        <!-- #region Lista de Servicios -->
+        <CollectionView x:Name="collectionViewServivios" Grid.Row="0">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <!-- Contenedor principal de cada servicio -->
+                    <Frame Padding="-1" HasShadow="False" BorderColor="Transparent" Margin="0" CornerRadius="0">
+                        <StackLayout Spacing="5">
+                            <!-- #region Encabezado del servicio -->
+                            <Frame Margin="0" Padding="-10" HasShadow="False" CornerRadius="0">
+                                <Frame.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#B0AEE4" Offset="1.0" />
+                                        <GradientStop Color="#9B95E4" Offset="0.0" />
+                                    </LinearGradientBrush>
+                                </Frame.Background>
+                                <StackLayout Padding="10">
+                                    <!-- Nombre del servicio -->
+                                    <Label Text="{Binding Servicio, StringFormat='🧩 {0}'}"
+                                           FontSize="Large"
+                                           HorizontalOptions="Center"
+                                           TextColor="White"
+                                           Margin="10" />
+                                </StackLayout>
+                            </Frame>
+                            <!-- #endregion -->
+                            <VerticalStackLayout Padding="10" Spacing="8">
+                                <Frame Padding="-1" CornerRadius="10">
+                                    <!-- #region Expander: Precintos -->
+                                    <toolkit:Expander ExpandedChanged="Expander_ExpandedChanged">
+                                        <toolkit:Expander.Header>
+                                            <Frame Margin="0" Padding="0" HasShadow="True" CornerRadius="0" BorderColor="Transparent">
+                                                <Frame.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                        <GradientStop Color="#ffa255" Offset="0.0" />
+                                                        <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                                                    </LinearGradientBrush>
+                                                </Frame.Background>
+                                                <StackLayout Padding="10">
+                                                    <Grid>
+                                                        <Label Text="Precintos" FontSize="Large" TextColor="White" />
+                                                        <Label FontSize="Large" TextColor="White" 
+                                                               HorizontalOptions="End"
+                                                               VerticalOptions="Center"
+                                                               Text="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Expander}}, Path=IsExpanded, Converter={StaticResource BoolToArrowConverter}}" />
+                                                    </Grid>
+                                                </StackLayout>
+                                            </Frame>
+                                        </toolkit:Expander.Header>
+                                        <Frame Margin="1" Padding="0">
+                                            <!-- Contenedor para los sub-expanders -->
+                                            <VerticalStackLayout Spacing="1">
+                                                <!-- #region Sub-expander: Precintos Apertura -->
+                                                <toolkit:Expander ExpandedChanged="Expander_ExpandedChanged">
+                                                    <toolkit:Expander.Header>
+                                                        <Frame Margin="0" Padding="-5" HasShadow="True" CornerRadius="0" BorderColor="Transparent">
+                                                            <Frame.Background>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                                    <GradientStop Color="#ae49ff" Offset="0.0" />
+                                                                    <GradientStop Color="{StaticResource Secondary}" Offset="1.0" />
+                                                                </LinearGradientBrush>
+                                                            </Frame.Background>
+                                                            <StackLayout Padding="10">
+                                                                <Grid>
+                                                                    <Label Text="Precintos de Apertura" FontSize="Large" TextColor="White" />
+                                                                    <Label FontSize="Large" TextColor="White" 
+                                                                           HorizontalOptions="End"
+                                                                           VerticalOptions="Center"
+                                                                           Text="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Expander}}, Path=IsExpanded, Converter={StaticResource BoolToArrowConverter}}" />
+                                                                </Grid>
+                                                            </StackLayout>
+                                                        </Frame>
+                                                    </toolkit:Expander.Header>
+                                                    <Frame BorderColor="Transparent"
+                                                           BackgroundColor="White"
+                                                           HasShadow="True"
+                                                           Margin="10,10,10,10"
+                                                           CornerRadius="10">
+                                                        <Frame.Shadow>
+                                                            <Shadow Brush="#80000000" 
+                                                                    Opacity="0.7"
+                                                                    Offset="0,8"
+                                                                    Radius="18" />
+                                                        </Frame.Shadow>
+                                                        <Grid Margin="0" RowSpacing="10" ColumnSpacing="10">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="40" />
+                                                                <RowDefinition Height="40" />
+                                                                <RowDefinition Height="40" />
+                                                                <RowDefinition Height="40" />
+                                                                <RowDefinition Height="40" />
+                                                            </Grid.RowDefinitions>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <!-- Entradas para Precintos de Apertura -->
+                                                            <Label Grid.Row="0" Grid.Column="0"
+                                                                   Text="Precinto 1:"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                            <Grid Grid.Row="0" Grid.Column="1" HorizontalOptions="FillAndExpand" >
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Entry Grid.Row="0" Grid.Column="0"
+                                                                   Text="{Binding PrecintoApertura1, Mode=TwoWay}"
+                                                                   VerticalOptions="Center" 
+                                                                       HorizontalOptions="FillAndExpand"/>
+                                                                <ImageButton  Clicked="btnEscanearBarcode_Clicked" Grid.Column="1"  HeightRequest="40" WidthRequest="40" Source="lectorqr.jpg"/>
+                                                            </Grid>
+                                                            <Label Grid.Row="1" Grid.Column="0"
+                                                                   Text="Precinto 2:"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                            <Grid Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" >
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Entry Grid.Row="0" Grid.Column="0"
+                                                                    Text="{Binding PrecintoApertura2, Mode=TwoWay}"
+                                                                    VerticalOptions="Center" 
+                                                                        HorizontalOptions="FillAndExpand"/>
+                                                                <ImageButton  Clicked="btnEscanearBarcode_Clicked" Grid.Column="1"  HeightRequest="40" WidthRequest="40" Source="lectorqr.jpg"/>
+                                                            </Grid>
+                                                            <Label Grid.Row="2" Grid.Column="0"
+                                                                   Text="Precinto 3:"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                            <Grid Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" >
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Entry Grid.Row="0" Grid.Column="0"
+                                                                    Text="{Binding PrecintoApertura3, Mode=TwoWay}"
+                                                                    VerticalOptions="Center" 
+                                                                        HorizontalOptions="FillAndExpand"/>
+                                                                <ImageButton  Clicked="btnEscanearBarcode_Clicked" Grid.Column="1"  HeightRequest="40" WidthRequest="40" Source="lectorqr.jpg"/>
+                                                            </Grid>
+                                                            <Label Grid.Row="3" Grid.Column="0"
+                                                                   Text="Precinto 4:"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                            <Grid Grid.Row="3" Grid.Column="1" HorizontalOptions="FillAndExpand" >
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Entry Grid.Row="0" Grid.Column="0"
+                                                                Text="{Binding PrecintoApertura4, Mode=TwoWay}"
+                                                                VerticalOptions="Center" 
+                                                                    HorizontalOptions="FillAndExpand"/>
+                                                                <ImageButton  Clicked="btnEscanearBarcode_Clicked" Grid.Column="1"  HeightRequest="40" WidthRequest="40" Source="lectorqr.jpg"/>
+                                                            </Grid>
+                                                            <Label Grid.Row="4" Grid.Column="0"
+                                                                   Text="Precinto 5:"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                            <Grid Grid.Row="4" Grid.Column="1" HorizontalOptions="FillAndExpand" >
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Entry Grid.Row="0" Grid.Column="0"
+                                                                Text="{Binding PrecintoApertura5, Mode=TwoWay}"
+                                                                VerticalOptions="Center" 
+                                                                    HorizontalOptions="FillAndExpand"/>
+                                                                <ImageButton  Clicked="btnEscanearBarcode_Clicked" Grid.Column="1"  HeightRequest="40" WidthRequest="40" Source="lectorqr.jpg" BackgroundColor="LightGray" BorderWidth="1" BorderColor="Transparent"/>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Frame>
+                                                </toolkit:Expander>
+                                                <!-- #endregion -->
+                                                <!-- #region Sub-expander: Precintos Cierre -->
+                                                <toolkit:Expander ExpandedChanged="Expander_ExpandedChanged">
+                                                    <toolkit:Expander.Header>
+                                                        <Frame Margin="0" Padding="-5" HasShadow="True" CornerRadius="0" BorderColor="Transparent">
+                                                            <Frame.Background>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                                    <GradientStop Color="#ae49ff" Offset="0.0" />
+                                                                    <GradientStop Color="{StaticResource Secondary}" Offset="1.0" />
+                                                                </LinearGradientBrush>
+                                                            </Frame.Background>
+                                                            <StackLayout Padding="10">
+                                                                <Grid>
+                                                                    <Label Text="Precintos de Cierre" FontSize="Large" TextColor="White" />
+                                                                    <Label FontSize="Large" TextColor="White" 
+                                                                           HorizontalOptions="End"
+                                                                           VerticalOptions="Center"
+                                                                           Text="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Expander}}, Path=IsExpanded, Converter={StaticResource BoolToArrowConverter}}" />
+                                                                </Grid>
+                                                            </StackLayout>
+                                                        </Frame>
+                                                    </toolkit:Expander.Header>
+                                                    <Frame BorderColor="Transparent"
+                                                           BackgroundColor="White"
+                                                           HasShadow="True"
+                                                           Margin="10,10,10,10"
+                                                           CornerRadius="10">
+                                                        <Frame.Shadow>
+                                                            <Shadow Brush="#80000000" 
+                                                                    Opacity="0.7"
+                                                                    Offset="0,8"
+                                                                    Radius="18" />
+                                                        </Frame.Shadow>
+                                                        <Grid Margin="0" RowSpacing="10" ColumnSpacing="10">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="40" />
+                                                                <RowDefinition Height="40" />
+                                                                <RowDefinition Height="40" />
+                                                                <RowDefinition Height="40" />
+                                                                <RowDefinition Height="40" />
+                                                            </Grid.RowDefinitions>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <!-- Entradas para Precintos de Cierre -->
+                                                            <Label Grid.Row="0" Grid.Column="0"
+                                                                   Text="Precinto 1:"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                            <Grid Grid.Row="0" Grid.Column="1" HorizontalOptions="FillAndExpand" >
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Entry Grid.Row="0" Grid.Column="0"
+                                                                Text="{Binding PrecintoCierre1, Mode=TwoWay}"
+                                                                VerticalOptions="Center" 
+                                                                    HorizontalOptions="FillAndExpand"/>
+                                                                <ImageButton  Clicked="btnEscanearBarcode_Clicked" Grid.Column="1"  HeightRequest="40" WidthRequest="40" Source="lectorqr.jpg"/>
+                                                            </Grid>
+                                                            <Label Grid.Row="1" Grid.Column="0"
+                                                                   Text="Precinto 2:"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                            <Grid Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" >
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Entry Grid.Row="0" Grid.Column="0"
+                                                                    Text="{Binding PrecintoCierre2, Mode=TwoWay}"
+                                                                    VerticalOptions="Center" 
+                                                                        HorizontalOptions="FillAndExpand"/>
+                                                                <ImageButton  Clicked="btnEscanearBarcode_Clicked" Grid.Column="1"  HeightRequest="40" WidthRequest="40" Source="lectorqr.jpg" />
+                                                            </Grid>
+                                                            <Label Grid.Row="2" Grid.Column="0"
+                                                                   Text="Precinto 3:"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                            <Grid Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" >
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Entry Grid.Row="0" Grid.Column="0"
+                                                                    Text="{Binding PrecintoCierre3, Mode=TwoWay}"
+                                                                    VerticalOptions="Center" 
+                                                                        HorizontalOptions="FillAndExpand"/>
+                                                                <ImageButton  Clicked="btnEscanearBarcode_Clicked" Grid.Column="1"  HeightRequest="40" WidthRequest="40" Source="lectorqr.jpg" />
+                                                            </Grid>
+                                                            <Label Grid.Row="3" Grid.Column="0"
+                                                                   Text="Precinto 4:"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                            <Grid Grid.Row="3" Grid.Column="1" HorizontalOptions="FillAndExpand" >
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Entry Grid.Row="0" Grid.Column="0"
+                                                                    Text="{Binding PrecintoCierre4, Mode=TwoWay}"
+                                                                    VerticalOptions="Center" 
+                                                                        HorizontalOptions="FillAndExpand"/>
+                                                                <ImageButton  Clicked="btnEscanearBarcode_Clicked" Grid.Column="1"  HeightRequest="40" WidthRequest="40" Source="lectorqr.jpg"/>
+                                                            </Grid>
+                                                            <Label Grid.Row="4" Grid.Column="0"
+                                                                   Text="Precinto 5:"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                            <Grid Grid.Row="4" Grid.Column="1" HorizontalOptions="FillAndExpand" >
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Entry Grid.Row="0" Grid.Column="0"
+                                                                Text="{Binding PrecintoCierre5, Mode=TwoWay}"
+                                                                VerticalOptions="Center" 
+                                                                    HorizontalOptions="FillAndExpand"/>
+                                                                <ImageButton  Clicked="btnEscanearBarcode_Clicked" Grid.Column="1"  HeightRequest="40" WidthRequest="40" Source="lectorqr.jpg" />
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Frame>
+                                                </toolkit:Expander>
+                                                <!-- #endregion -->
+                                            </VerticalStackLayout>
+                                        </Frame>
+                                    </toolkit:Expander>
+                                    <!-- #endregion -->
+                                </Frame>
+                                <Frame Padding="-1" CornerRadius="10">
+                                    <!-- #region Expander: Detalles -->
+                                    <toolkit:Expander ExpandedChanged="Expander_ExpandedChanged">
+                                        <toolkit:Expander.Header>
+                                            <Frame Margin="0" Padding="0" HasShadow="True" CornerRadius="0" BorderColor="Transparent">
+                                                <Frame.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                        <GradientStop Color="#ffa255" Offset="0.0" />
+                                                        <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                                                    </LinearGradientBrush>
+                                                </Frame.Background>
+                                                <StackLayout Padding="10">
+                                                    <Grid>
+                                                        <Label Text="Detalles" FontSize="Large" TextColor="White" />
+                                                        <Label FontSize="Large" TextColor="White" 
+                                                               HorizontalOptions="End"
+                                                               VerticalOptions="Center"
+                                                               Text="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Expander}}, Path=IsExpanded, Converter={StaticResource BoolToArrowConverter}}" />
+                                                    </Grid>
+                                                </StackLayout>
+                                            </Frame>
+                                        </toolkit:Expander.Header>
+                                        <Frame BorderColor="Transparent"
+                                               BackgroundColor="White"
+                                               HasShadow="True"
+                                               Margin="10,10,10,10"
+                                               CornerRadius="10">
+                                            <Frame.Shadow>
+                                                <Shadow Brush="#80000000" 
+                                                        Opacity="0.7"
+                                                        Offset="0,8"
+                                                        Radius="18" />
+                                            </Frame.Shadow>
+                                            <Grid Margin="0" RowSpacing="10" ColumnSpacing="10">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="34" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <!-- Entrada para 'Dice Contener' -->
+                                                <Label Grid.Row="0" Grid.Column="0"
+                                                       Text="Dice Contener:"
+                                                       FontAttributes="Bold"
+                                                       VerticalTextAlignment="Center" />
+                                                <Entry Grid.Row="0" Grid.Column="1"
+                                                       Text="{Binding DiceContener}"
+                                                       TextColor="Black"
+                                                       FontSize="Small"
+                                                       HorizontalTextAlignment="Start"
+                                                       VerticalTextAlignment="Center" />
+                                                
+                                            </Grid>
+                                        </Frame>
+                                    </toolkit:Expander>
+                                    <!-- #endregion -->
+                                </Frame>
+                                <Frame Padding="-1" CornerRadius="10">
+                                    <!-- #region Expander: Sub Servicios -->
+                                    <toolkit:Expander IsExpanded="False">
+                                        <toolkit:Expander.Header>
+                                            <Frame Margin="0" Padding="0" HasShadow="True" CornerRadius="0" BorderColor="Transparent">
+                                                <Frame.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                        <GradientStop Color="#ffa255" Offset="0.0" />
+                                                        <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                                                    </LinearGradientBrush>
+                                                </Frame.Background>
+                                                <StackLayout Padding="10">
+                                                    <Grid>
+                                                        <Label Text="Sub Servicios" FontSize="Large" TextColor="White" />
+                                                        <Label FontSize="Large" TextColor="White" 
+                                                               HorizontalOptions="End"
+                                                               VerticalOptions="Center"
+                                                               Text="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Expander}}, Path=IsExpanded, Converter={StaticResource BoolToArrowConverter}}" />
+                                                    </Grid>
+                                                </StackLayout>
+                                            </Frame>
+                                        </toolkit:Expander.Header>
+                                        <!-- #region Detalles del servicio (CollectionView) -->
+                                        <CollectionView ItemsSource="{Binding Detalles}" Margin="0,0,0,0">
+                                            <CollectionView.Shadow>
+                                                <Shadow Brush="Gray" Opacity="0.5" Offset="0,5" Radius="15" />
+                                            </CollectionView.Shadow>
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <!-- Tarjeta de detalle de subservicio -->
+                                                    <Frame BorderColor="Transparent"
+                                                           BackgroundColor="{Binding RowColor}"
+                                                           HasShadow="False"
+                                                           Margin="10,10,10,10"
+                                                           CornerRadius="10">
+                                                        <Grid Margin="0" RowSpacing="10" ColumnSpacing="10">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="20" />
+                                                                <RowDefinition Height="20" />
+                                                                <RowDefinition Height="40" />
+                                                                <!--<RowDefinition Height="40" />-->
+                                                                <RowDefinition Height="20" />
+                                                            </Grid.RowDefinitions>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <!-- Sub Servicio -->
+                                                            <Label Grid.Row="0" Grid.Column="0"
+                                                                   Text="🛠️ Sub Servicio:"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                            <Label Grid.Row="0" Grid.Column="1"
+                                                                   Text="{Binding SubServicio, StringFormat=' {0}'}"
+                                                                   FontSize="Small"
+                                                                   VerticalTextAlignment="Center"
+                                                                   Grid.ColumnSpan="2" />
+                                                            <!-- Producto -->
+                                                            <Label Grid.Row="1" Grid.Column="0"
+                                                                   Text="🛒 Producto:"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                            <Label Grid.Row="1" Grid.Column="1"
+                                                                   Text="{Binding Articulo, StringFormat=' {0}'}"
+                                                                   FontSize="Small"
+                                                                   VerticalTextAlignment="Center"
+                                                                   Grid.ColumnSpan="2" />
+                                                            <!-- Cantidad (Stepper y Entry) -->
+                                                            <Label Grid.Row="2" Grid.Column="0"
+                                                                   Text="🔢 Cantidad:"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                            <Stepper Grid.Row="2" Grid.Column="1"
+                                                                     Value="{Binding Cant, Mode=TwoWay}"
+                                                                     Minimum="0"
+                                                                     Maximum="1000"
+                                                                     Increment="1"
+                                                                     WidthRequest="150"
+                                                                     HeightRequest="40"
+                                                                     HorizontalOptions="Start"
+                                                                     VerticalOptions="Center" />
+                                                            <Entry Grid.Row="2" Grid.Column="2"
+                                                                   Text="{Binding Cant, Mode=TwoWay}"
+                                                                   FontSize="Small"
+                                                                   Keyboard="Numeric"
+                                                                   HorizontalOptions="FillAndExpand"
+                                                                   HorizontalTextAlignment="Center"
+                                                                   VerticalTextAlignment="Center"
+                                                                   WidthRequest="80" />
+                                                            <!-- Aprobado (Switch y estado) -->
+                                                            <Label Grid.Row="3" Grid.Column="0"
+                                                                   Text="👍 Aprobado:"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                            <Switch Grid.Row="3" Grid.Column="1"
+                                                                    IsToggled="{Binding Aprobado, Converter={StaticResource AprobadoToBoolConverter}}"
+                                                                    VerticalOptions="Center" />
+                                                            <Label Grid.Row="3" Grid.Column="2"
+                                                                   Text="{Binding Aprobado, Converter={StaticResource AprobadoToSiNoConverter}}"
+                                                                   FontAttributes="Bold"
+                                                                   VerticalTextAlignment="Center" />
+                                                        </Grid>
+                                                    </Frame>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                        <!-- #endregion -->
+                                    </toolkit:Expander>
+                                    <!-- #endregion -->
+                                </Frame>
+                            </VerticalStackLayout>
+                        </StackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <!-- #endregion -->
+        <!-- #region Botones Guardar y Finalizar -->
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <!-- Botón Guardar -->
+            <Button x:Name="btnGuardar" Grid.Column="0"
+                    Text="💾 Guardar"
+                    Clicked="btnGuardar_Clicked"
+                    Margin="5,0,5,0">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#ffa255" Offset="0.0" />
+                        <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Button.Background>
+                <Button.Shadow>
+                    <Shadow Brush="Gray" Opacity="0.5" Offset="2,2" Radius="10" />
+                </Button.Shadow>
+            </Button>
+            <!-- Botón Finalizar -->
+            <Button x:Name="btnActa" Grid.Column="1"
+                    Text="📝 Acta"
+                    Clicked="btnActa_Clicked"
+                    Margin="5,0,5,0">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#ae49ff" Offset="0.0" />
+                        <GradientStop Color="{StaticResource Secondary}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Button.Background>
+                <Button.Shadow>
+                    <Shadow Brush="Gray" Opacity="0.5" Offset="2,2" Radius="10" />
+                </Button.Shadow>
+            </Button>
+        </Grid>
+        <!-- #endregion -->
+    </Grid>
+    <!-- #endregion -->
+</ContentPage>

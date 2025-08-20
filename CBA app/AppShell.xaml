@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="CBA_app.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:CBA_app"
+    
+    xmlns:templates="clr-namespace:CBA_app.Templates"
+    xmlns:models="clr-namespace:CBA_app.Models"
+    Shell.TabBarIsVisible="False"
+     Shell.TabBarBackgroundColor="Transparent"
+     Shell.TabBarForegroundColor="{StaticResource Primary}"
+     Shell.TabBarTitleColor="{StaticResource Primary}"
+    
+     Shell.TabBarUnselectedColor="{StaticResource Secondary}"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:startupPages="clr-namespace:CBA_app.Views.Login">
+    
+
+    <Shell.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="Black" StatusBarStyle="LightContent" />
+    </Shell.Behaviors>
+    <!--<TabBar>
+        <ShellContent
+        Title="Inicio"
+        Icon="home.png"
+        ContentTemplate="{DataTemplate local:HomePage}" />
+        <ShellContent
+        Title="Servicios"
+        Icon="servicio.png"
+        ContentTemplate="{DataTemplate local:ServicioPage}" />
+        <ShellContent
+        Title="Dashboard"
+        Icon="dashboard.png"
+        ContentTemplate="{DataTemplate local:DashboardPage}" />
+    </TabBar>-->
+    <ShellContent FlyoutItemIsVisible="False" Shell.FlyoutBehavior="Disabled"
+        ContentTemplate="{DataTemplate startupPages:LoadingPage}" Route="LoadingPage" />
+
+    <ShellContent
+        Title="" FlyoutItemIsVisible="False" Shell.FlyoutBehavior="Disabled"
+        ContentTemplate="{DataTemplate startupPages:LoginPage}"
+        Route="LoginPage" />
+    
+    <Shell.FlyoutHeader>
+        <templates:FlyoutHeader />
+    </Shell.FlyoutHeader>
+    <Shell.FlyoutFooter>
+        <templates:FlyoutFooter />
+    </Shell.FlyoutFooter>
+    <!--<Shell.TabBarIsVisible>
+        <x:Boolean>{Binding MostrarTabBar}</x:Boolean>
+    </Shell.TabBarIsVisible>-->
+
+
+
+</Shell>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CBA_app.Views.Login.PerfilPage"
+             xmlns:handlers="clr-namespace:CBA_app.Handlers"
+             Title="PerfilPage">
+    <ScrollView  BackgroundColor="White">
+     
+        <Grid ColumnDefinitions="*,320,*" RowDefinitions="auto,auto,auto,auto,auto,auto,auto" RowSpacing="20">
+            <VerticalStackLayout HeightRequest="200" x:Name="LayoutImagen" Grid.Column="0" Margin="0,0,0,-100" Grid.ColumnSpan="3" Grid.Row="1" Grid.RowSpan="1" ZIndex="1" >
+               
+                <Grid RowDefinitions="*,auto" ColumnDefinitions="*,auto,*" Opacity="0.9">
+
+                    <Frame Grid.Column="1" Grid.Row="0" ZIndex="3" BackgroundColor="White" CornerRadius="100" HeightRequest="110" WidthRequest="110">
+                        <ImageButton x:Name="ImagePerfil"  BackgroundColor="Transparent"  Source="perfil.png" WidthRequest="150" HeightRequest="150">
+                            <ImageButton.Shadow>
+                                <Shadow Brush="{StaticResource Secondary}" Opacity="0.5" Offset="5,5" Radius="5" />
+                            </ImageButton.Shadow>
+                        </ImageButton>
+                    </Frame>
+                    
+                </Grid>
+
+            </VerticalStackLayout>
+            <Path Data="M 0,500 C 500,0 0,200 0,0" HorizontalOptions="FillAndExpand" VerticalOptions="End"  Rotation="0" Grid.Row="5" Grid.RowSpan="6" Grid.ColumnSpan="3">
+                <Path.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="{StaticResource Primary}" Offset="0.0" />
+                        <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Path.Fill>
+            </Path>
+            <Path Data="M -100,-200 C 30,100 300,300 500,0" HorizontalOptions="Start" VerticalOptions="Start" Grid.Row="0" Grid.ColumnSpan="3" ZIndex="0" Grid.RowSpan="6">
+
+                <Path.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="{StaticResource Primary}" Offset="0.0" />
+                        <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Path.Fill>
+            </Path>
+            <Frame Grid.Column="1" Grid.Row="3" Padding="-1" HasShadow="True" Background="#33E1E0E0">
+                <Frame.Shadow>
+                    <Shadow Brush="black" Opacity="0.5" Offset="5,5" Radius="5" />
+                </Frame.Shadow>
+                <StackLayout>
+
+                    <Grid ColumnDefinitions="*" ColumnSpacing="10"  RowDefinitions="auto,auto,auto,auto" RowSpacing="10" Padding="10">
+                        <Label Text="🪪" FontSize="25" Grid.Row="0" Grid.Column="0" VerticalTextAlignment="Center"/>
+                        <Label x:Name="EntryNombre" FontSize="Large" FontAttributes="Bold" TextColor="BlueViolet" HorizontalTextAlignment="Center" Grid.Row="0" Grid.Column="1" Text="Nombre" VerticalTextAlignment="Center" />
+                        <Label  Text="🪪" FontSize="25" Grid.Row="1" Grid.Column="0" VerticalTextAlignment="Center" />
+                        <Label x:Name="EntryApellido"  FontSize="Large" FontAttributes="Bold" TextColor="BlueViolet" HorizontalTextAlignment="Center"  Grid.Row="1" Grid.Column="1" Text="Nombre" VerticalTextAlignment="Center" />
+                        <Label Text="📧" FontSize="25"  Grid.Row="2" Grid.Column="0" VerticalTextAlignment="Center"/>
+                        <Label x:Name="EntryCorreo"  FontSize="Large" FontAttributes="Bold" TextColor="BlueViolet" HorizontalTextAlignment="Center"  Grid.Row="2" Grid.Column="1" Text="Nombre"  VerticalTextAlignment="Center"/>
+                        <Label Text="🏭" FontSize="25" Grid.Row="3" Grid.Column="0" VerticalTextAlignment="Center"/>
+                        <Label x:Name="EntrySucursal"  FontSize="Large" FontAttributes="Bold" TextColor="BlueViolet" HorizontalTextAlignment="Center"   Grid.Row="3" Grid.Column="1" Text="Nombre" VerticalTextAlignment="Center"/>
+                        <!--<Label Text="Abreviatura:" Grid.Row="4" Grid.Column="0" VerticalTextAlignment="Center"/>
+                        <Entry x:Name="EntryAbreviatura" Grid.Row="4" Grid.Column="1" IsReadOnly="True" Text="Nombre" TextColor="Black"/>-->
+
+                    </Grid>
+
+
+                </StackLayout>
+
+            </Frame>
+            <Frame Grid.Column="1" Grid.Row="4" Padding="-1" HasShadow="True" Background="#33E1E0E0" >
+                <Frame.Shadow>
+                    <Shadow Brush="black" Opacity="0.5" Offset="5,5" Radius="5" />
+                </Frame.Shadow>
+                <StackLayout Margin="5">
+                    <Label Text="Roles:" FontAttributes="Bold" FontSize="Medium" TextColor="BlueViolet"/>
+                    <CollectionView ItemsSource="{Binding roles}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="{Binding nombre_rol}" FontSize="Small" TextColor="Black"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    
+                </StackLayout>
+            </Frame>
+            <Frame Grid.Column="1" Grid.Row="5" Padding="-1" HasShadow="True" Background="#33E1E0E0" >
+                <Frame.Shadow>
+                    <Shadow Brush="black" Opacity="0.5" Offset="5,5" Radius="5" />
+                </Frame.Shadow>
+                <StackLayout Margin="5">
+                    <Label Text="Permisos:" FontAttributes="Bold" FontSize="Medium" TextColor="BlueViolet" Margin="0,10,0,0"/>
+                    <CollectionView ItemsSource="{Binding permisos}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="{Binding nombre_permiso}" FontSize="Small" TextColor="Black"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </Frame>
+
+        </Grid>
+        
+        
+
+
+    </ScrollView>
+    
+</ContentPage>

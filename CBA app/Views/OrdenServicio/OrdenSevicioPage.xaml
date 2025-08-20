@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CBA_app.Views.OrdenServicio.OrdenSevicioPage"
+	xmlns:local="clr-namespace:CBA_app.Views.GIO"
+	xmlns:handlers="clr-namespace:CBA_app.Handlers"
+             Title="Orden de Sevicio">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem  IconImageSource = "filter.png" Text="Filtros" Clicked="btnFiltros_Clicked" x:Name="btnFiltros"  />
+    </ContentPage.ToolbarItems>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Key="EvenTemplate">
+                <ViewCell>
+                    <SwipeView x:Name="OddSwipeView" SwipeStarted="OddSwipeView_SwipeStarted" >
+                        <SwipeView.LeftItems>
+                            <SwipeItems>
+                                <!--<SwipeItem Text="Imprimir" BackgroundColor="LightBlue" IconImageSource="imprimirenvector.svg" IsVisible="{Binding BtnConfirmado}" Clicked="OnImprimirSwipeItemClicked" /><SwipeItem Text="Confirmar" BackgroundColor="ForestGreen" IconImageSource="confirmar.svg" IsVisible="{Binding BtnDesconfirmado}" Clicked="OnConfirmarSwipeItemClicked"/><SwipeItem Text="Desconfirmar" BackgroundColor="Red" IconImageSource="desconfirmar.png" IsVisible="{Binding BtnConfirmado}" Clicked="OnDesconfirmarSwipeItemClicked" />-->
+                            </SwipeItems>
+                        </SwipeView.LeftItems>
+                        <Frame BackgroundColor="#F5F5F5" BorderColor="Gray" HasShadow="True" Margin="0,1,0,0" Padding="0" CornerRadius="3" VerticalOptions="FillAndExpand">
+                            <Grid VerticalOptions="FillAndExpand">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- Número de contenedor -->
+                                <Label Margin="5" Text="🚛 Contenedor:" FontAttributes="Bold" TextColor="Black" Grid.Column="0" Grid.Row="0" VerticalTextAlignment="Start" HorizontalTextAlignment="Start" />
+                                <Label Margin="5" Text="{Binding ContenedorNumero, StringFormat=' {0}'}" TextColor="Black" Grid.Column="1" Grid.Row="0" VerticalTextAlignment="Start" HorizontalTextAlignment="Start" />
+                                <!-- Motivo -->
+                                <Label Margin="5" Text="{Binding Motivo, StringFormat=' {0}'}" FontAttributes="Bold" TextColor="Black" Grid.Column="2" Grid.Row="0" VerticalTextAlignment="Start" HorizontalTextAlignment="Start" />
+                                <!-- Nombre de persona, ocupa el ancho disponible -->
+                                <Label Margin="5" Text="🧒 Cliente:" FontAttributes="Bold" TextColor="Black" Grid.Column="0" Grid.Row="1" VerticalTextAlignment="Start" HorizontalTextAlignment="Start" />
+                                <Label Margin="5" Text="{Binding PersonaNombre, StringFormat=' {0}'}" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" HorizontalTextAlignment="Start" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                            </Grid>
+                        </Frame>
+                    </SwipeView>
+                </ViewCell>
+            </DataTemplate>
+            <DataTemplate x:Key="OddTemplate">
+                <ViewCell>
+                    <SwipeView x:Name="OddSwipeView" SwipeStarted="OddSwipeView_SwipeStarted">
+                        <SwipeView.LeftItems>
+                            <SwipeItems>
+                                <!--<SwipeItem Text="Imprimir" BackgroundColor="LightBlue" IconImageSource="imprimirenvector.svg" IsVisible="{Binding BtnConfirmado}" Clicked="OnImprimirSwipeItemClicked" /><SwipeItem Text="Confirmar" BackgroundColor="ForestGreen" IconImageSource="confirmar.svg" IsVisible="{Binding BtnDesconfirmado}" Clicked="OnConfirmarSwipeItemClicked"/><SwipeItem Text="Desconfirmar" BackgroundColor="Red" IconImageSource="desconfirmar.png" IsVisible="{Binding BtnConfirmado}" Clicked="OnDesconfirmarSwipeItemClicked" />-->
+                            </SwipeItems>
+                        </SwipeView.LeftItems>
+                        <Frame BorderColor="Gray" Margin="0,1,0,0" Padding="0" CornerRadius="3" HasShadow="True" VerticalOptions="FillAndExpand">
+                            <Frame.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="White" Offset="0.0" />
+                                    <GradientStop Color="White" Offset="0.5" />
+                                </LinearGradientBrush>
+                            </Frame.Background>
+                            <Grid VerticalOptions="FillAndExpand">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- Número de contenedor -->
+                                <Label Margin="5" Text="🚛 Contenedor:" FontAttributes="Bold" TextColor="Black" Grid.Column="0" Grid.Row="0" VerticalTextAlignment="Start" HorizontalTextAlignment="Start" />
+                                <Label Margin="5" Text="{Binding ContenedorNumero, StringFormat=' {0}'}" TextColor="Black" Grid.Column="1" Grid.Row="0" VerticalTextAlignment="Start" HorizontalTextAlignment="Start" />
+                                <!-- Motivo -->
+                                <Label Margin="5" Text="{Binding Motivo, StringFormat=' {0}'}" FontAttributes="Bold" TextColor="Black" Grid.Column="2" Grid.Row="0" VerticalTextAlignment="Start" HorizontalTextAlignment="Start" />
+                                <!-- Nombre de persona, ocupa el ancho disponible -->
+                                <Label Margin="5" Text="🧒 Cliente:" FontAttributes="Bold" TextColor="Black" Grid.Column="0" Grid.Row="1" VerticalTextAlignment="Start" HorizontalTextAlignment="Start" />
+                                <Label Margin="5" Text="{Binding PersonaNombre, StringFormat=' {0}'}" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" HorizontalTextAlignment="Start" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                            </Grid>
+                        </Frame>
+                    </SwipeView>
+                </ViewCell>
+            </DataTemplate>
+            <local:AlternatingColorTemplateSelector x:Key="AlternatingColorTemplateSelector"
+                                         EvenTemplate="{StaticResource EvenTemplate}"
+                                         OddTemplate="{StaticResource OddTemplate}" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <Grid RowDefinitions="Auto, *,31" Padding="10" RowSpacing="15">
+            <!-- Filtros -->
+            <Frame Padding="0" HasShadow="True" BackgroundColor="{StaticResource Primary}" x:Name="FrameFiltros" IsVisible="False" BorderColor="{StaticResource Primary}" Grid.Row="0" Margin="-11,-11,-11,5" CornerRadius="0">
+                <Frame.Shadow>
+                    <Shadow Brush="LightGray" Opacity="0.5" Offset="5,5" Radius="15" />
+                </Frame.Shadow>
+                <StackLayout Spacing="10">
+                    <StackLayout BackgroundColor="{StaticResource Primary}" Padding="-1">
+                        <Label Margin="72,0,0,0" x:Name="lbMensaje" Text="Filtros de busqueda" FontSize="19.5" IsVisible="True" FontAttributes="Bold" HorizontalOptions="StartAndExpand" TextColor="White"/>
+                    </StackLayout>
+                    <StackLayout Margin="10,-5,10,10" Spacing="5">
+                        <Grid RowSpacing="5" ColumnSpacing="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Text="Fecha:" VerticalTextAlignment="Center" Grid.Column="0" TextColor="White"  FontAttributes="Bold" />
+                            <!--<DatePicker x:Name="fechaInicioDatePicker" Grid.Column="1" HorizontalOptions="StartAndExpand" VerticalOptions="Center" TextColor="White"  FontAttributes="Bold"/>-->
+                            <handlers:UnderlineColor x:Name="fechaInicioDatePicker" Grid.Column="1" HorizontalOptions="Fill" VerticalOptions="Center" TextColor="White"  FontAttributes="Bold" />
+                            <Label Text="📅" FontSize="18" VerticalOptions="Center" HorizontalOptions="End" Margin="0,0,5,0" Grid.Column="1"/>
+                            <Button x:Name="btnbuscar" Text="🔍 Buscar" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Clicked="btnbuscar_Clicked">
+                                <Button.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#ae49ff" Offset="0.0" />
+                                        <GradientStop Color="{StaticResource Secondary}" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </Button.Background>
+                                <Button.Shadow>
+                                    <Shadow Brush="Gray" Opacity="0.5" Offset="2,2" Radius="10" />
+                                </Button.Shadow>
+                            </Button>
+                        </Grid>
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+            <!-- ListView -->
+            <RefreshView x:Name="refreshView" Grid.Row="1" Margin="0,0,0,-51" Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+                <ScrollView  Orientation="Vertical" VerticalOptions="FillAndExpand"  >
+                    <StackLayout VerticalOptions="StartAndExpand">
+                        <ActivityIndicator x:Name="loading" HeightRequest="30" Color="Blue" IsRunning="True" IsVisible="false" />
+                        <Label x:Name="lblRegistros"
+                           TextColor="Gray"
+                           FontAttributes="Italic"
+                           HorizontalOptions="Center"
+                           />
+                        <ListView x:Name="listResultado" RowHeight="70" ItemSelected="listResultado_ItemSelected" CachingStrategy="RecycleElement" SeparatorVisibility="None" SeparatorColor="Transparent" ItemTemplate="{StaticResource AlternatingColorTemplateSelector}"></ListView>
+                    </StackLayout>
+                </ScrollView>
+            </RefreshView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

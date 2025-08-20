@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+	xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                  x:Class="CBA_app.Views.LectorQR.LectorQrPage"
+                  Size="350,350" Color="#FFFFFFFF"
+                  CanBeDismissedByTappingOutsideOfPopup="True">
+    <ScrollView Orientation="Vertical" BackgroundColor="Transparent" >
+        <StackLayout >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="lectorqr.jpg" HeightRequest="40" WidthRequest="40" Grid.Column="0"/>
+                <Label Text="Escaner Qr/Barcode" Grid.Column="1" HorizontalTextAlignment="Start" VerticalTextAlignment="Center"/>
+                <Button Text="❌" Clicked="Button_Clicked" BackgroundColor="Transparent" Grid.Column="2"/>
+            </Grid>
+            <Grid>
+                <Frame
+                    Padding="0"
+                    HasShadow="True"
+                    BorderColor="Gray"
+                    
+                    CornerRadius="20"
+                   
+                    BackgroundColor="White"
+                    HeightRequest="300"
+                    WidthRequest="300">
+                    <!-- Cámara para escanear -->
+                    <zxing:CameraBarcodeReaderView x:Name="barcodeReaderView"
+                       VerticalOptions="FillAndExpand"
+                        HorizontalOptions="FillAndExpand"
+                       HeightRequest="300"
+                       WidthRequest="300"
+                       
+                       BarcodesDetected="barcodeReaderView_BarcodesDetected"/>
+                </Frame>
+            </Grid>
+        </StackLayout>
+    </ScrollView>
+</toolkit:Popup>
+   

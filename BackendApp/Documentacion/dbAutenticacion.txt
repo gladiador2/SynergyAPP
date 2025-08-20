@@ -1,0 +1,90 @@
+-- ==========================
+-- 1. Tabla de Usuarios
+-- ==========================
+CREATE TABLE usuarios (
+    id_usuario SERIAL PRIMARY KEY,
+    nombre_usuario VARCHAR(50) UNIQUE NOT NULL,
+    nombre_completo VARCHAR(150) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    hash_password VARCHAR(255) NOT NULL,
+    estado VARCHAR(20) DEFAULT 'activo',
+    fecha_creacion TIMESTAMP DEFAULT NOW(),
+    ultimo_login TIMESTAMP
+);
+
+-- ==========================
+-- 2. Tabla de Roles
+-- ==========================
+CREATE TABLE roles (
+    id_rol SERIAL PRIMARY KEY,
+    nombre_rol VARCHAR(50) UNIQUE NOT NULL,
+    descripcion VARCHAR(150)
+);
+
+-- ==========================
+-- 3. Tabla de Permisos
+-- ==========================
+CREATE TABLE permisos (
+    id_permiso SERIAL PRIMARY KEY,
+    nombre_permiso VARCHAR(50) UNIQUE NOT NULL,
+    descripcion VARCHAR(150)
+);
+
+-- ==========================
+-- 4. Tabla de Módulos
+-- ==========================
+CREATE TABLE modulos (
+    id_modulo SERIAL PRIMARY KEY,
+    nombre_modulo VARCHAR(50) UNIQUE NOT NULL,
+    descripcion VARCHAR(150)
+);
+
+-- ==========================
+-- 5. Relación Roles - Permisos
+-- ==========================
+CREATE TABLE roles_permisos (
+    id_rol INT NOT NULL,
+    id_permiso INT NOT NULL,
+    id_modulo INT NULL,
+    PRIMARY KEY (id_rol, id_permiso, id_modulo),
+    FOREIGN KEY (id_rol) REFERENCES roles (id_rol) ON DELETE CASCADE,
+    FOREIGN KEY (id_permiso) REFERENCES permisos (id_permiso) ON DELETE CASCADE,
+    FOREIGN KEY (id_modulo) REFERENCES modulos (id_modulo) ON DELETE CASCADE
+);
+
+-- ==========================
+-- 6. Relación Usuarios - Roles
+-- ==========================
+CREATE TABLE usuarios_roles (
+    id_usuario INT NOT NULL,
+    id_rol INT NOT NULL,
+    PRIMARY KEY (id_usuario, id_rol),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_rol) REFERENCES roles (id_rol) ON DELETE CASCADE
+);
+
+-- ==========================
+-- 7. Auditoría de accesos
+-- ==========================
+CREATE TABLE accesos_sistema (
+    id_acceso BIGSERIAL PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    fecha_acceso TIMESTAMP DEFAULT NOW(),
+    ip_origen VARCHAR(45),
+    exito BOOLEAN,
+    motivo_fallo VARCHAR(100),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario) ON DELETE CASCADE
+);
+
+-- ==========================
+-- 8. Auditoría de acciones
+-- ==========================
+CREATE TABLE acciones_auditadas (
+    id_accion BIGSERIAL PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    accion VARCHAR(100) NOT NULL,
+    modulo VARCHAR(50),
+    fecha_accion TIMESTAMP DEFAULT NOW(),
+    datos_afectados TEXT,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario) ON DELETE CASCADE
+);

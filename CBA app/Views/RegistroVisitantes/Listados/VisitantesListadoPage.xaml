@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CBA_app.Views.RegistroVisitantes.Listados.VisitantesListadoPage"
+             xmlns:viewModels="clr-namespace:CBA_app.ViewModels.RegistroVisitantes"
+             Title="Listado de visitantes">
+    <!--<ContentPage.BindingContext>
+        <viewModels:ListadoVisitantesViewModel />
+    </ContentPage.BindingContext>-->
+
+    <ScrollView>
+        <VerticalStackLayout>
+
+            <Frame Margin="5" Padding="0" HasShadow="True">
+                <StackLayout>
+                    <HorizontalStackLayout HorizontalOptions="Center">
+                        <Label Text="Registros de la fecha: " VerticalOptions="Center"></Label>
+                        <DatePicker  HorizontalOptions="CenterAndExpand" Format="D" Date="{Binding FechaBusqueda}" FontAttributes="Italic,Bold" FontAutoScalingEnabled="True" DateSelected="DatePicker_DateSelected"></DatePicker>
+
+                    </HorizontalStackLayout>
+                    <FlexLayout Direction="Row" Wrap="Wrap"
+                        JustifyContent="SpaceAround">
+                        <HorizontalStackLayout HorizontalOptions="Center">
+                            <Label Text="Chapa N°: " VerticalOptions="Center"></Label>
+                            <Entry Placeholder="Chapa Número" Text="{Binding NroChapa}" TextChanged="Entry_TextChanged"></Entry>
+
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout HorizontalOptions="Center">
+                            <Label Text="Doc N°: " VerticalOptions="Center"></Label>
+                            <Entry Placeholder="Documento Número" Text="{Binding NroDocumento}" TextChanged="Entry_TextChanged"></Entry>
+
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout HorizontalOptions="Center">
+                            <Label VerticalOptions="Center" Margin="15,0,0,0" Text="Solo en Predio"></Label>
+                            <Switch x:Name="mySwitch" IsToggled="{Binding SoloEnPredio}" Toggled="mySwitch_Toggled"/>
+
+                        </HorizontalStackLayout>
+
+                    </FlexLayout>
+                </StackLayout>
+
+            </Frame>
+
+            <StackLayout Padding="1" BackgroundColor="#F0F0F0" Margin="5">
+                <Grid Padding="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="83"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Text="Documento" FontAttributes="Bold" Grid.Column="0"></Label>
+                    <Label Text="Nombre" FontAttributes="Bold" Grid.Column="1"></Label>
+                    <Label Text="Empresa" FontAttributes="Bold" Grid.Column="2"></Label>
+                    <Label Text="Hora Entrada" FontAttributes="Bold" Grid.Column="3"></Label>
+                    <Label Text="Observación" FontAttributes="Bold" Grid.Column="0" Grid.Row="1"></Label>
+                    <Label Text="Hora Salida" FontAttributes="Bold" Grid.Column="3"  Grid.Row="1"></Label>
+                </Grid>
+            </StackLayout>
+            <ActivityIndicator x:Name="loading" HeightRequest="30" Color="Blue" IsRunning="True" IsVisible="false"/>
+
+
+            <ListView ItemsSource="{Binding ListaVisitas}" Grid.Row="0" HasUnevenRows="True" SeparatorVisibility="Default" CachingStrategy="RecycleElement" SeparatorColor="Gray">
+                <ListView.ItemTemplate >
+                    <DataTemplate >
+                        <ViewCell >
+
+                            <Grid>
+                                <Frame Padding="5" Margin="2,0,5,2"  HasShadow="True" BorderColor="Gray">
+                                    <Frame.Style>
+                                        <Style TargetType="Frame">
+                                            <Setter Property="BackgroundColor" Value="Green"></Setter>
+                                            <Style.Triggers>
+                                                <DataTrigger TargetType="Frame" Binding="{Binding SALIDO}" Value="N">
+                                                    <Setter Property="BackgroundColor" Value="LightGreen" />
+
+                                                </DataTrigger>
+                                                <DataTrigger TargetType="Frame" Binding="{Binding SALIDO}" Value="S">
+                                                    <Setter Property="BackgroundColor" Value="PaleVioletRed" />
+
+                                                </DataTrigger>
+                                            </Style.Triggers>
+
+                                        </Style>
+                                    </Frame.Style>
+                                    <StackLayout>
+                                        <Grid>
+                                            <Grid.Style>
+                                                <Style TargetType="Grid">
+                                                    <Setter Property="IsVisible" Value="true"></Setter>
+                                                    <Style.Triggers>
+                                                        <DataTrigger TargetType="Grid" Binding="{Binding VEHICULO_CHAPA}" Value="">
+                                                            <Setter Property="IsVisible" Value="false" />
+
+                                                        </DataTrigger>
+
+                                                    </Style.Triggers>
+
+                                                </Style>
+                                            </Grid.Style>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <FlexLayout Direction="Row"  Grid.Column="0" Grid.Row="0">
+                                                <Label Text="Llegada: " FontSize="Small"  ></Label>
+                                                <Label Text="{Binding FECHA_LLEGADA}" FontAttributes="Bold"  FontSize="Small"></Label>
+                                            </FlexLayout>
+                                            <FlexLayout Direction="Row"  Grid.Column="1" Grid.Row="0" HorizontalOptions="Center">
+                                                <Label Text="Salida: "  VerticalOptions="Center" FontSize="Small"></Label>
+                                                <Label Text="{Binding salida}" FontAttributes="Bold"  FontSize="Small"></Label>
+
+                                            </FlexLayout>
+                                            <HorizontalStackLayout Grid.Column="2" Grid.Row="0" HorizontalOptions="End" Margin="0,0,8,0">
+                                                <Label Text="Salio: " VerticalOptions="Center" FontSize="Small"></Label>
+                                                <Label Text="{Binding SALIDO}" FontAttributes="Bold"  VerticalOptions="Center" FontSize="Small"></Label>
+                                            </HorizontalStackLayout>
+                                            <HorizontalStackLayout Grid.Column="0" Grid.Row="1">
+                                                <Label Text="Tipo: " FontSize="Small"></Label>
+                                                <Label Text="{Binding VEHICULO_TIPO}" FontAttributes="Bold"  FontSize="Small"></Label>
+                                            </HorizontalStackLayout>
+                                            <HorizontalStackLayout Grid.Column="1" Grid.Row="1" HorizontalOptions="Center">
+                                                <Label Text="Marca: " FontSize="Small"></Label>
+                                                <Label Text="{Binding VEHICULO_MARCA}" FontAttributes="Bold"  FontSize="Small"></Label>
+                                            </HorizontalStackLayout>
+                                            <HorizontalStackLayout Grid.Column="2" Grid.Row="1" HorizontalOptions="End" Margin="0,0,8,0">
+                                                <Label Text="Chapa: " FontSize="Small"></Label>
+                                                <Label Text="{Binding VEHICULO_CHAPA}" FontAttributes="Bold"  FontSize="Small"></Label>
+                                            </HorizontalStackLayout>
+
+                                        </Grid>
+                                        <StackLayout BackgroundColor="WhiteSmoke">
+                                            <Label Text="Visitantes" FontAttributes="Bold"  HorizontalTextAlignment="Center">
+                                                <Label.Style>
+                                                    <Style TargetType="Label">
+                                                        <Setter Property="Text" Value="Visitantes"></Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger TargetType="Label" Binding="{Binding VEHICULO_CHAPA}" Value="">
+                                                                <Setter Property="Text" Value="Visitante sin vehículo"></Setter>
+
+                                                            </DataTrigger>
+
+                                                        </Style.Triggers>
+
+                                                    </Style>
+                                                </Label.Style>
+                                            </Label>
+
+                                        </StackLayout>
+                                        <StackLayout>
+
+
+                                            <ListView ItemsSource="{Binding visitantes}" SeparatorVisibility="Default" SeparatorColor="White" CachingStrategy="RecycleElement">
+                                                <ListView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <ViewCell>
+                                                            <StackLayout Margin="1" >
+                                                                <StackLayout.Style>
+                                                                    <Style TargetType="StackLayout">
+                                                                        <Setter Property="BackgroundColor" Value="Transparent"></Setter>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger TargetType="StackLayout" Binding="{Binding salido}" Value="N">
+                                                                                <Setter Property="BackgroundColor" Value="LightGreen" />
+
+                                                                            </DataTrigger>
+                                                                            <DataTrigger TargetType="StackLayout" Binding="{Binding salido}" Value="S">
+                                                                                <Setter Property="BackgroundColor" Value="PaleVioletRed" />
+
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+
+                                                                    </Style>
+                                                                </StackLayout.Style>
+                                                                <Grid Padding="1">
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition />
+                                                                        <RowDefinition />
+                                                                    </Grid.RowDefinitions>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                        <ColumnDefinition Width="83"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Label Text="{Binding visitante_documento}" Grid.Column="0"></Label>
+                                                                    <Label Text="{Binding visitante_nombre}" FontAutoScalingEnabled="True" Grid.Column="1"></Label>
+                                                                    <Label Text="{Binding visitante_empresa}" Grid.Column="2"></Label>
+                                                                    <Label Text="{Binding hora_entrada}" Grid.Column="3"></Label>
+                                                                    <Label Text="{Binding observacion}" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1"></Label>
+
+                                                                    <Label Text="{Binding hora_salida}" Grid.Column="3" Grid.Row="1">
+                                                                        <Label.Style>
+                                                                            <Style TargetType="Label">
+
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger TargetType="Label" Binding="{Binding salido}" Value="N">
+                                                                                        <Setter Property="Text" Value="Pendiente" />
+
+                                                                                    </DataTrigger>
+
+                                                                                </Style.Triggers>
+
+                                                                            </Style>
+                                                                        </Label.Style>
+                                                                    </Label>
+                                                                </Grid>
+                                                            </StackLayout>
+                                                        </ViewCell>
+                                                    </DataTemplate>
+                                                </ListView.ItemTemplate>
+                                            </ListView>
+
+
+                                        </StackLayout>
+
+                                    </StackLayout>
+
+
+                                </Frame>
+                            </Grid>
+
+                        </ViewCell>
+
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+
+
+
+        </VerticalStackLayout>
+    </ScrollView>
+        
+   
+</ContentPage>

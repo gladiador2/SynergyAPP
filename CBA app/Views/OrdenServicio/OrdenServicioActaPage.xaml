@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CBA_app.Views.OrdenServicio.OrdenServicioActaPage"
+             Title="Acta de Orden de Servicio">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="8">
+            <Label Text="ID" />
+            <Entry Text="{Binding ID}" Keyboard="Numeric" />
+
+            <Label Text="Pedido Posicionamiento ID" />
+            <Entry Text="{Binding PEDIDO_POSICIONAMIENTO_ID}" Keyboard="Numeric" />
+
+            <Label Text="Tipo Acta" />
+            <Entry Text="{Binding TIPO_ACTA}" />
+
+            <Label Text="Fecha Emisión" />
+            <Entry Text="{Binding FECHA_EMISION, StringFormat='{0:yyyy-MM-dd}'}" />
+
+            <Label Text="Número Acta" />
+            <Entry Text="{Binding NUM_ACTA}" />
+
+            <Label Text="Reporte Número" />
+            <Entry Text="{Binding REPORTE_NUMERO}" />
+
+            <Label Text="Hoja Número" />
+            <Entry Text="{Binding HOJA_NUMERO}" />
+
+            <Label Text="Fecha Ingreso" />
+            <Entry Text="{Binding FECHA_INGRESO, StringFormat='{0:yyyy-MM-dd}'}" />
+
+            <Label Text="Hora Inicio" />
+            <Entry Text="{Binding HORA_INICIO}" />
+
+            <Label Text="Hora Finalizado" />
+            <Entry Text="{Binding HORA_FINALIZADO}" />
+
+            <Label Text="Carga Tipo" />
+            <Entry Text="{Binding CARGA_TIPO}" />
+
+            <Label Text="Importación Tipo" />
+            <Entry Text="{Binding IMPORTACION_TIPO}" />
+
+            <Label Text="Régimen Aduanero" />
+            <Entry Text="{Binding REGIMEN_ADUANERO}" />
+
+            <Label Text="Despacho Número" />
+            <Entry Text="{Binding DESPACHO_NUMERO}" />
+
+            <Label Text="Consignatario" />
+            <Entry Text="{Binding CONSIGNATARIO}" />
+
+            <Label Text="Orden Servicio" />
+            <Entry Text="{Binding ORDEN_SERVICIO}" />
+
+            <Label Text="Canal Asignado" />
+            <Entry Text="{Binding CANAL_ASIGNADO}" />
+
+            <Label Text="CTO Num" />
+            <Entry Text="{Binding CTO_NUM}" />
+
+            <Label Text="BM" />
+            <Entry Text="{Binding BM}" />
+
+            <Label Text="Reg Ent Num" />
+            <Entry Text="{Binding REG_ENT_NUM}" />
+
+            <Label Text="Contenedor RUA" />
+            <Entry Text="{Binding CONTENEDOR_RUA}" />
+
+            <Label Text="Tamaño Contenedor" />
+            <Entry Text="{Binding TAMANIO_CONTENEDOR}" />
+
+            <Label Text="Precintos Manif" />
+            <Entry Text="{Binding PRECINTOS_MANIF}" />
+
+            <Label Text="Cant Manif Tipo Embalaje" />
+            <Entry Text="{Binding CANT_MANIF_TIPO_EMBALAJE}" />
+
+            <Label Text="Peso Merc Manif" />
+            <Entry Text="{Binding PESO_MERC_MANIF}" />
+
+            <Label Text="Cierre Precintado" />
+            <Entry Text="{Binding CIERRE_PRECINTADO}" />
+
+            <Label Text="Cant Verif Tipo Embalaje" />
+            <Entry Text="{Binding CANT_VERIF_TIPO_EMBALAJE}" />
+
+            <Label Text="Dice Contener" />
+            <Entry Text="{Binding DICE_CONTENER}" />
+
+            <Label Text="Mercadería" />
+            <Entry Text="{Binding MERCADERIA}" />
+
+            <Label Text="Origen Mercadería" />
+            <Entry Text="{Binding ORIGEN_MERCADERIA}" />
+
+            <Label Text="Depósito" />
+            <Entry Text="{Binding DEPOSITO}" />
+
+            <Label Text="M2 Depósito" />
+            <Entry Text="{Binding M2_DEPOSITO}" Keyboard="Numeric" />
+
+            <Label Text="Contenedor PSF" />
+            <Entry Text="{Binding CONTENEDOR_PSF}" />
+
+            <Label Text="Camión Externo" />
+            <Entry Text="{Binding CAMION_EXTERNO}" />
+
+            <Label Text="Entrega Camión" />
+            <Entry Text="{Binding ENTREGA_CAMION}" />
+
+            <Label Text="Precinto Apertura" />
+            <Entry Text="{Binding PRECINTO_APERTURA}" />
+
+            <Label Text="Precinto Cierre" />
+            <Entry Text="{Binding PRECINTO_CIERRE}" />
+
+            <Label Text="Cajas Dañadas" />
+            <Entry Text="{Binding CAJAS_DANIADAS}" Keyboard="Numeric" />
+
+            <Label Text="Cajas Dañadas Aprobado" />
+            <Entry Text="{Binding CAJAS_DANIADAS_APROBADO}" />
+
+            <Label Text="Cajas Abiertas" />
+            <Entry Text="{Binding CAJAS_ABIERTAS}" Keyboard="Numeric" />
+
+            <Label Text="Cajas Abiertas Aprobado" />
+            <Entry Text="{Binding CAJAS_ABIERTAS_APROBADO}" />
+
+            <Label Text="Retiro Muestras" />
+            <Entry Text="{Binding RETIRO_MUESTRAS}" Keyboard="Numeric" />
+
+            <Label Text="Retiro Muestras Aprobado" />
+            <Entry Text="{Binding RETIRO_MUESTRAS_APROBADO}" />
+
+            <Label Text="Conteo Cantidad" />
+            <Entry Text="{Binding CONTEO_CANTIDAD}" Keyboard="Numeric" />
+
+            <Label Text="Conteo Aprobado" />
+            <Entry Text="{Binding CONTEO_APROBADO}" />
+
+            <Label Text="Área Contenedor" />
+            <Entry Text="{Binding AREA_CONTENEDOR}" />
+
+            <Label Text="Área Vehículo" />
+            <Entry Text="{Binding AREA_VEHICULO}" />
+
+            <Label Text="Zona Operación" />
+            <Entry Text="{Binding ZONA_OPERACION}" />
+
+            <Label Text="Observaciones" />
+            <Entry Text="{Binding OBSERVACIONES}" />
+
+            <Label Text="Apuntador PSF" />
+            <Entry Text="{Binding APUNTADOR_PSF}" />
+
+            <Label Text="Funcionario DNA" />
+            <Entry Text="{Binding FUNCIONARIO_DNA}" />
+
+            <Label Text="Despachante" />
+            <Entry Text="{Binding DESPACHANTE}" />
+
+            <Label Text="Visturía" />
+            <Entry Text="{Binding VISTURIA}" />
+
+            <Label Text="Resguardo" />
+            <Entry Text="{Binding RESGUARDO}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
