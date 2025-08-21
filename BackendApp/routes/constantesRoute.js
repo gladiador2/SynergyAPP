@@ -11,6 +11,8 @@ const router = Router();
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de Tipos Constancias disponibles para la facturacion electronica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de Tipos Constancias
@@ -44,6 +46,8 @@ router.get('/consultarTiposConstancias', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de caracter�sticas de cargas disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de caracter�sticas de cargas
@@ -77,6 +81,8 @@ router.get('/consultarCaracteristicasCargas', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de evento de conformidad disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de evento de conformidad
@@ -110,6 +116,8 @@ router.get('/consultarEventoConformidadTipo', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de documentos impresos disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de documentos impresos
@@ -143,6 +151,8 @@ router.get('/consultarTiposDocumentosImpresos', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de documentos asociados disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de documentos asociados
@@ -176,6 +186,8 @@ router.get('/consultarTiposDocumentosAsociados', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de responsables de fletes disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de responsables de fletes
@@ -209,6 +221,8 @@ router.get('/consultarResponsablesFletes', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de modalidades de transportes disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de modalidades de transportes
@@ -242,6 +256,8 @@ router.get('/consultarModalidadesTransportes', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de transportes disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de transportes
@@ -275,6 +291,8 @@ router.get('/consultarTiposTransportes', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de combustibles disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de combustibles
@@ -308,6 +326,8 @@ router.get('/consultarTiposCombustibles', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de operaciones de veh�culos disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de operaciones de veh�culos
@@ -341,6 +361,8 @@ router.get('/consultarTiposOperacionesVehiculos', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de relevancias de mercader�as disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de relevancias de mercader�as
@@ -374,6 +396,8 @@ router.get('/consultarRelevanciasMercaderias', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de condiciones de negociaciones disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de condiciones de negociaciones
@@ -407,6 +431,8 @@ router.get('/consultarCondicionesNegociaciones', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tasas ISC disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tasas ISC
@@ -440,6 +466,8 @@ router.get('/consultarTasasIsc', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de categor�as ISC disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de categor�as ISC
@@ -473,6 +501,8 @@ router.get('/consultarCategoriasIsc', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de c�digos de afectaciones disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de c�digos de afectaciones
@@ -506,6 +536,8 @@ router.get('/consultarCodigosAfectaciones', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de unidades de medidas disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de unidades de medidas
@@ -539,6 +571,8 @@ router.get('/consultarUnidadesMedidas', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de formas de procesamiento de tarjetas de cr�dito disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de formas de procesamiento de tarjetas de cr�dito
@@ -572,6 +606,8 @@ router.get('/consultarTarjetasCreditosFormasProcesamiento', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de tarjetas de cr�dito disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de tarjetas de cr�dito
@@ -605,6 +641,8 @@ router.get('/consultarTarjetasCreditosTipos', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de condiciones de cr�ditos disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de condiciones de cr�ditos
@@ -638,6 +676,8 @@ router.get('/consultarCondicionesCreditosTipos', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de condiciones de pagos disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de condiciones de pagos
@@ -671,6 +711,8 @@ router.get('/consultarCondicionesTiposPagos', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de condiciones de operaciones disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de condiciones de operaciones
@@ -704,6 +746,8 @@ router.get('/consultarCondicionesOperaciones', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de responsables de remisiones disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de responsables de remisiones
@@ -737,6 +781,8 @@ router.get('/consultarRemisionesResponsables', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de motivos de remisiones disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de motivos de remisiones
@@ -770,6 +816,8 @@ router.get('/consultarRemisionesMotivos', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de motivos de notas de cr�dito disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de motivos de notas de cr�dito
@@ -803,6 +851,8 @@ router.get('/consultarNotasCreditosMotivos', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de naturaleza de vendedor para autofactura disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de naturaleza de vendedor para autofactura
@@ -836,6 +886,8 @@ router.get('/consultarNaturalezaVendedorAutofactura', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de receptor disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de receptor
@@ -869,6 +921,8 @@ router.get('/consultarTipoReceptor', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de indicadores de presencias disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de indicadores de presencias
@@ -902,6 +956,8 @@ router.get('/consultarIndicadoresPresencias', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de operaciones disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de operaciones
@@ -935,6 +991,8 @@ router.get('/consultarTiposOperaciones', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de documentos de receptor disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de documentos de receptor
@@ -968,6 +1026,8 @@ router.get('/consultarTiposDocumentosReceptor', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de documentos de identidad disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de documentos de identidad
@@ -1001,6 +1061,8 @@ router.get('/consultarTiposDocumentosIdentidades', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de reg�menes disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de reg�menes
@@ -1034,6 +1096,8 @@ router.get('/consultarTiposRegimenes', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de global por �tem disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de global por �tem
@@ -1067,6 +1131,8 @@ router.get('/consultarGlobalPorItem', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de emisiones disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de emisiones
@@ -1100,6 +1166,8 @@ router.get('/consultarTiposEmisiones', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de documentos disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de documentos
@@ -1133,6 +1201,8 @@ router.get('/consultarTiposDocumentos', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de transacciones disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de transacciones
@@ -1166,6 +1236,8 @@ router.get('/consultarTiposTransacciones', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de monedas disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de monedas
@@ -1199,6 +1271,8 @@ router.get('/consultarMonedas', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de impuestos disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de impuestos
@@ -1233,6 +1307,8 @@ router.get('/consultarTiposImpuestos', (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de pa�ses disponibles para la facturaci�n electr�nica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de pa�ses
@@ -1267,6 +1343,8 @@ router.get('/consultarPaises', async (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de departamentos disponibles.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de departamentos
@@ -1301,6 +1379,8 @@ router.get('/consultarDepartamentos', async (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de distritos para el departamento especificado.
+ *     security:
+ *       - ApiKeyAuth: []
  *     parameters:
  *       - in: query
  *         name: departamentoId
@@ -1348,6 +1428,8 @@ router.get('/consultarDistritos', async (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de ciudades para el distrito especificado.
+ *     security:
+ *       - ApiKeyAuth: []
  *     parameters:
  *       - in: query
  *         name: distritoId
@@ -1396,6 +1478,8 @@ router.get('/consultarCiudades', async (req, res) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de regimenes disponibles.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de regimenes

@@ -3,21 +3,31 @@ import express from 'express';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { verificarToken } from './middleware/authMiddleware.js';
+//import verificarApiKey from './middleware/apiKeyMiddleware.js';
 import testRoute from './routes/testRoute.js';
 import authRoute from './routes/authRoute.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
 import facturacionRoute from './routes/facturacionRoute.js';
 import constantesRoute from './routes/constantesRoute.js';
+import logger from './logger.js';
+import type { Request, Response, NextFunction } from 'express';
+
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware de logging simple
+//// Middleware de logging simple
+//app.use((req, res, next) => {
+//    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+//    next();
+//});
+
 app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    logger.info(`${req.method} ${req.url} IP:${req.ip}`);
     next();
 });
+
 
 // Protección con Helmet
 app.use(helmet());
@@ -38,16 +48,38 @@ app.use(limiter);
 const swaggerDefinition = {
     openapi: '3.0.0',
     info: {
-        title: 'API Facturación',
+        title: 'API Facturacion',
         version: '1.0.0',
-        description: 'Documentación de la API de Facturación',
+        description: 'Documentacion de la API de Facturacion',
     },
     servers: [
         {
             url: 'http://localhost:3000',
         },
     ],
+    components: {
+        securitySchemes: {
+            ApiKeyAuth: {
+                type: 'apiKey',
+                in: 'header',
+                name: 'x-api-key',
+                description: 'API Key para autenticacion',
+            },
+            BearerAuth: {
+                type: 'http',
+                scheme: 'bearer',
+                bearerFormat: 'JWT',
+                description: 'JWT para autenticacion',
+            },
+        },
+    },
+    // Puedes definir seguridad global o por endpoint
+    // security: [
+    //     { ApiKeyAuth: [] },
+    //     { BearerAuth: [] }
+    // ],
 };
+
 
 const options = {
     swaggerDefinition,
@@ -60,16 +92,21 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Rutas públicas (no requieren token)
 authRoute(app);
-facturacionRoute(app);
 constantesRoute(app);
 
-// Middleware para proteger todas las rutas siguientes
+// Middleware para proteger todas las rutas siguientes (JWT)
 app.use(verificarToken);
 
 // Rutas privadas (requieren token)
 testRoute(app);
+facturacionRoute(app);
+
+// Middleware para manejar errores
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    logger.error(`Error en ${req.method} ${req.url}: ${err.message}`);
+    res.status(500).json({ error: 'Error interno del servidor' });
+});
 
 app.listen(port, () => {
-    
     console.log(`API escuchando en http://localhost:${port}`);
 });

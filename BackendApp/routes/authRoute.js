@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import pool from '../db.js';
 import { body, validationResult } from 'express-validator';
+import logger from '../logger.js';
 dotenv.config();
 const MAX_INTENTOS = Number(process.env.MAX_INTENTOS) || 5;
 const VENTANA_MINUTOS = Number(process.env.VENTANA_MINUTOS) || 1;
@@ -286,7 +287,7 @@ export default function (router) {
             });
         }
         catch (err) {
-            console.error('Error en login:', err);
+            logger.error('Error en login:', err);
             res.status(500).json({
                 success: false,
                 message: 'Error interno del servidor',

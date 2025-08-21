@@ -10,7 +10,6 @@ export interface AuthRequest extends Request {
 
 export function verificarToken(req: AuthRequest, res: Response, next: NextFunction) {
     const authHeader = req.headers['authorization'];
-
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({
             success: false,

@@ -4,6 +4,10 @@ import apiset from 'facturacionelectronicapy-setapi'
 import xmlsign from 'facturacionelectronicapy-xmlsign'
 import kude from 'facturacionelectronicapy-kude'
 import qr from 'facturacionelectronicapy-qrgen'
+import pool from '../db.js';
+import jwt from 'jsonwebtoken';
+
+
 
 
 const Kude = kude.default;
@@ -20,6 +24,8 @@ const router = Router();
  *       - xmlgen
  *     summary: Obtiene un departamento por ID
  *     description: Retorna la información de un departamento según su ID.
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -62,6 +68,8 @@ router.post('/getDepartamento', (req: Request, res: Response) => {
  *       - xmlgen
  *     summary: Obtiene un distrito por ID
  *     description: Retorna la información de un distrito según su ID.
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -101,6 +109,8 @@ router.post('/getDistrito', (req: Request, res: Response) => {
  *       - xmlgen
  *     summary: Obtiene una ciudad por ID
  *     description: Retorna la información de una ciudad según su ID.
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -140,6 +150,8 @@ router.post('/getCiudad', (req: Request, res: Response) => {
  *       - xmlgen
  *     summary: Genera XML DE
  *     description: Genera el archivo XML del Documento Electrónico exigido por SIFEN en base a JSON. Requiere los objetos 'params' y 'data' según la estructura oficial.
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -248,15 +260,75 @@ router.post('/getCiudad', (req: Request, res: Response) => {
  */
 router.post('/generateXMLDE', async (req: Request, res: Response) => {
     const { params, data, config } = req.body;
+    let estado = 'success';
+    let errorMsg = null;
+    let jsonId: number | null = null;
+
+    // Extraer el usuario del token JWT sin validar
+    const authHeader = req.headers['authorization'];
+    let usuarioID: number | null = null;
+    let token: string | undefined = undefined;
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        const parts = authHeader.split(' ');
+        token = parts.length === 2 ? parts[1] : undefined;
+    }
+
+    if (token) {
+        try {
+            // Solo decodifica el token, no valida la firma ni expiración
+            const decoded: any = jwt.decode(token);
+            usuarioID = decoded?.id ?? null;
+        } catch (err) {
+            usuarioID = null;
+        }
+    }
+
+
+    // Guardar el JSON recibido
+    try {
+        const result = await pool.query(
+            `INSERT INTO json_recibido (datos_json, estado, fecha_creacion, usuarioID) VALUES ($1, $2, NOW(), $3) RETURNING id`,
+            [req.body, estado, usuarioID]
+        );
+        jsonId = result.rows[0].id;
+    } catch (err) {
+        estado = 'error';
+        errorMsg = err instanceof Error ? err.message : String(err);
+        await pool.query(
+            `INSERT INTO json_recibido (datos_json, estado, error, fecha_creacion, usuarioID) VALUES ($1, $2, $3, NOW(), $4)`,
+            [req.body, estado, errorMsg, usuarioID]
+        );
+        return res.status(500).json({ success: false, error: errorMsg });
+    }
+
+    // Generar el XML
     try {
         const xml = await DE.generateXMLDE(params, data, config);
-        res.json({ success: true, xml });
+
+        // Guardar el XML en la tabla xml_generado y relacionar con jsonId
+        await pool.query(
+            `INSERT INTO xml_generado (datos_xml, json_id, fecha_creacion) VALUES ($1, $2, NOW())`,
+            [xml, jsonId]
+        );
+
+        res.json({ success: true, xml, jsonId });
     } catch (error) {
-        // Uniform error handling
-        const errorMessage = error instanceof Error ? error.message : error;
-        res.status(500).json({ success: false, error: errorMessage });
+        estado = 'error';
+        errorMsg = error instanceof Error ? error.message : String(error);
+        if (jsonId) {
+            await pool.query(
+                `UPDATE json_recibido SET estado = $1, error = $2 WHERE id = $3`,
+                [estado, errorMsg, jsonId]
+            );
+        }
+        res.status(500).json({ success: false, error: errorMsg, jsonId });
     }
 });
+
+
+
+
 
 /**
  * @swagger
@@ -266,6 +338,8 @@ router.post('/generateXMLDE', async (req: Request, res: Response) => {
  *       - xmlgen
  *     summary: Genera XML Evento Cancelación
  *     description: Genera el XML para el evento de cancelación de un documento electrónico.
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -347,6 +421,8 @@ router.post('/generateXMLEventoCancelacion', async (req: Request, res: Response)
  *     tags:
  *       - xmlgen
  *     summary: Genera XML Evento Inutilización
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -384,6 +460,8 @@ router.post('/generateXMLEventoInutilizacion', async (req: Request, res: Respons
  *     tags:
  *       - xmlgen
  *     summary: Genera XML Evento Conformidad
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -421,6 +499,8 @@ router.post('/generateXMLEventoConformidad', async (req: Request, res: Response)
  *     tags:
  *       - xmlgen
  *     summary: Genera XML Evento Disconformidad
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -458,6 +538,8 @@ router.post('/generateXMLEventoDisconformidad', async (req: Request, res: Respon
  *     tags:
  *       - xmlgen
  *     summary: Genera XML Evento Desconocimiento
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -495,6 +577,8 @@ router.post('/generateXMLEventoDesconocimiento', async (req: Request, res: Respo
  *     tags:
  *       - xmlgen
  *     summary: Genera XML Evento Notificación
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -532,6 +616,8 @@ router.post('/generateXMLEventoNotificacion', async (req: Request, res: Response
  *     tags:
  *       - xmlgen
  *     summary: Genera XML Evento Nominación
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -569,6 +655,8 @@ router.post('/generateXMLEventoNominacion', async (req: Request, res: Response) 
  *     tags:
  *       - xmlgen
  *     summary: Genera XML Evento Actualización Datos Transporte
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -607,6 +695,8 @@ router.post('/generateXMLEventoActualizacionDatosTransporte', async (req: Reques
  *     tags:
  *       - setapi
  *     summary: Consulta documento por CDC
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -649,6 +739,8 @@ router.post('/setapi/consulta', async (req: Request, res: Response) => {
  *     tags:
  *       - setapi
  *     summary: Consulta por RUC
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -691,6 +783,8 @@ router.post('/setapi/consultaRUC', async (req: Request, res: Response) => {
  *     tags:
  *       - setapi
  *     summary: Consulta por número de lote
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -733,6 +827,8 @@ router.post('/setapi/consultaLote', async (req: Request, res: Response) => {
  *     tags:
  *       - setapi
  *     summary: Recibe documento XML
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -775,6 +871,8 @@ router.post('/setapi/recibe', async (req: Request, res: Response) => {
  *     tags:
  *       - setapi
  *     summary: Recibe lote de documentos XML
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -817,6 +915,8 @@ router.post('/setapi/recibeLote', async (req: Request, res: Response) => {
  *     tags:
  *       - setapi
  *     summary: Envía evento XML
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -858,6 +958,8 @@ router.post('/setapi/evento', async (req: Request, res: Response) => {
  *     tags:
  *       - xmlsign
  *     summary: Firma un XML
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -898,6 +1000,8 @@ router.post('/xmlsign/signXML', async (req: Request, res: Response) => {
  *     tags:
  *       - xmlsign
  *     summary: Firma múltiples XMLs
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -937,6 +1041,8 @@ router.post('/xmlsign/signXMLFiles', async (req: Request, res: Response) => {
  *     tags:
  *       - xmlsign
  *     summary: Firma un XML de evento
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -976,6 +1082,8 @@ router.post('/xmlsign/signXMLEvento', async (req: Request, res: Response) => {
  *     tags:
  *       - xmlsign
  *     summary: Firma un XML de recibo
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -1015,6 +1123,8 @@ router.post('/xmlsign/signXMLRecibo', async (req: Request, res: Response) => {
  *     tags:
  *       - xmlsign
  *     summary: Obtiene la fecha de expiración del certificado
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -1051,6 +1161,8 @@ router.post('/xmlsign/getExpiration', async (req: Request, res: Response) => {
  *     tags:
  *       - kude
  *     summary: Genera el PDF KUDE a partir de un XML firmado
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -1089,6 +1201,8 @@ router.post('/kude/generateKUDE', async (req: Request, res: Response) => {
  *     tags:
  *       - qrgen
  *     summary: Genera el QR a partir de un XML firmado
+ *     security:
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:

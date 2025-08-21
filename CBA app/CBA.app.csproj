@@ -142,6 +142,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Templates\BotonesCarousel.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Templates\FlyoutFooter.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

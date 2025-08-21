@@ -12,6 +12,8 @@ const router = Router();
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de Tipos Constancias disponibles para la facturacion electronica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de Tipos Constancias
@@ -45,6 +47,8 @@ router.get('/consultarTiposConstancias', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de características de cargas disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de características de cargas
@@ -78,6 +82,8 @@ router.get('/consultarCaracteristicasCargas', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de evento de conformidad disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de evento de conformidad
@@ -111,6 +117,8 @@ router.get('/consultarEventoConformidadTipo', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de documentos impresos disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de documentos impresos
@@ -144,6 +152,8 @@ router.get('/consultarTiposDocumentosImpresos', (req: Request, res: Response) =>
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de documentos asociados disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de documentos asociados
@@ -177,6 +187,8 @@ router.get('/consultarTiposDocumentosAsociados', (req: Request, res: Response) =
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de responsables de fletes disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de responsables de fletes
@@ -210,6 +222,8 @@ router.get('/consultarResponsablesFletes', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de modalidades de transportes disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de modalidades de transportes
@@ -243,6 +257,8 @@ router.get('/consultarModalidadesTransportes', (req: Request, res: Response) => 
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de transportes disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de transportes
@@ -276,6 +292,8 @@ router.get('/consultarTiposTransportes', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de combustibles disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de combustibles
@@ -309,6 +327,8 @@ router.get('/consultarTiposCombustibles', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de operaciones de vehículos disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de operaciones de vehículos
@@ -342,6 +362,8 @@ router.get('/consultarTiposOperacionesVehiculos', (req: Request, res: Response) 
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de relevancias de mercaderías disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de relevancias de mercaderías
@@ -375,6 +397,8 @@ router.get('/consultarRelevanciasMercaderias', (req: Request, res: Response) => 
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de condiciones de negociaciones disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de condiciones de negociaciones
@@ -408,6 +432,8 @@ router.get('/consultarCondicionesNegociaciones', (req: Request, res: Response) =
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tasas ISC disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tasas ISC
@@ -441,6 +467,8 @@ router.get('/consultarTasasIsc', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de categorías ISC disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de categorías ISC
@@ -474,6 +502,8 @@ router.get('/consultarCategoriasIsc', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de códigos de afectaciones disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de códigos de afectaciones
@@ -507,6 +537,8 @@ router.get('/consultarCodigosAfectaciones', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de unidades de medidas disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de unidades de medidas
@@ -540,6 +572,8 @@ router.get('/consultarUnidadesMedidas', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de formas de procesamiento de tarjetas de crédito disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de formas de procesamiento de tarjetas de crédito
@@ -573,6 +607,8 @@ router.get('/consultarTarjetasCreditosFormasProcesamiento', (req: Request, res: 
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de tarjetas de crédito disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de tarjetas de crédito
@@ -606,6 +642,8 @@ router.get('/consultarTarjetasCreditosTipos', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de condiciones de créditos disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de condiciones de créditos
@@ -639,6 +677,8 @@ router.get('/consultarCondicionesCreditosTipos', (req: Request, res: Response) =
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de condiciones de pagos disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de condiciones de pagos
@@ -672,6 +712,8 @@ router.get('/consultarCondicionesTiposPagos', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de condiciones de operaciones disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de condiciones de operaciones
@@ -705,6 +747,8 @@ router.get('/consultarCondicionesOperaciones', (req: Request, res: Response) => 
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de responsables de remisiones disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de responsables de remisiones
@@ -738,6 +782,8 @@ router.get('/consultarRemisionesResponsables', (req: Request, res: Response) => 
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de motivos de remisiones disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de motivos de remisiones
@@ -771,6 +817,8 @@ router.get('/consultarRemisionesMotivos', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de motivos de notas de crédito disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de motivos de notas de crédito
@@ -804,6 +852,8 @@ router.get('/consultarNotasCreditosMotivos', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de naturaleza de vendedor para autofactura disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de naturaleza de vendedor para autofactura
@@ -837,6 +887,8 @@ router.get('/consultarNaturalezaVendedorAutofactura', (req: Request, res: Respon
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de receptor disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de receptor
@@ -870,6 +922,8 @@ router.get('/consultarTipoReceptor', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de indicadores de presencias disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de indicadores de presencias
@@ -903,6 +957,8 @@ router.get('/consultarIndicadoresPresencias', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de operaciones disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de operaciones
@@ -936,6 +992,8 @@ router.get('/consultarTiposOperaciones', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de documentos de receptor disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de documentos de receptor
@@ -969,6 +1027,8 @@ router.get('/consultarTiposDocumentosReceptor', (req: Request, res: Response) =>
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de documentos de identidad disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de documentos de identidad
@@ -1002,6 +1062,8 @@ router.get('/consultarTiposDocumentosIdentidades', (req: Request, res: Response)
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de regímenes disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de regímenes
@@ -1035,6 +1097,8 @@ router.get('/consultarTiposRegimenes', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de global por ítem disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de global por ítem
@@ -1068,6 +1132,8 @@ router.get('/consultarGlobalPorItem', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de emisiones disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de emisiones
@@ -1101,6 +1167,8 @@ router.get('/consultarTiposEmisiones', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de documentos disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de documentos
@@ -1126,6 +1194,7 @@ router.get('/consultarTiposDocumentos', (req: Request, res: Response) => {
     }
 });
 
+
 /**
  * @swagger
  * /Constantes/consultarTiposTransacciones:
@@ -1134,6 +1203,8 @@ router.get('/consultarTiposDocumentos', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de transacciones disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de transacciones
@@ -1167,6 +1238,8 @@ router.get('/consultarTiposTransacciones', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de monedas disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de monedas
@@ -1200,6 +1273,8 @@ router.get('/consultarMonedas', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de impuestos disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de impuestos
@@ -1233,6 +1308,8 @@ router.get('/consultarTiposImpuestos', (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de países disponibles para la facturación electrónica.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de países
@@ -1267,6 +1344,8 @@ router.get('/consultarPaises', async (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de departamentos disponibles.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de departamentos
@@ -1301,6 +1380,8 @@ router.get('/consultarDepartamentos', async (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de distritos para el departamento especificado.
+ *     security:
+ *       - ApiKeyAuth: []
  *     parameters:
  *       - in: query
  *         name: departamentoId
@@ -1349,6 +1430,8 @@ router.get('/consultarDistritos', async (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de ciudades para el distrito especificado.
+ *     security:
+ *       - ApiKeyAuth: []
  *     parameters:
  *       - in: query
  *         name: distritoId
@@ -1397,6 +1480,8 @@ router.get('/consultarCiudades', async (req: Request, res: Response) => {
  *     tags:
  *       - Constantes
  *     description: Retorna la lista de tipos de regimenes disponibles.
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Lista de tipos de regimenes

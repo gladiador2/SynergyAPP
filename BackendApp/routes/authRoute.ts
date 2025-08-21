@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import pool from '../db.js';
 import { body, validationResult } from 'express-validator';
+import logger from '../logger.js';
 
 dotenv.config();
 
@@ -329,7 +330,8 @@ export default function (router: Router) {
             });
 
         } catch (err) {
-            console.error('Error en login:', err);
+            logger.error('Error en login:', err);
+            
             res.status(500).json({
                 success: false,
                 message: 'Error interno del servidor',

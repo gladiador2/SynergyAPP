@@ -1,5 +1,7 @@
 
 
+using CBA_app.Models;
+
 namespace CBA_app.Views;
 
 public partial class Bienvenida : ContentPage
@@ -7,7 +9,18 @@ public partial class Bienvenida : ContentPage
 	public Bienvenida()
 	{
 		InitializeComponent();
-	}
+        BotonesCarouselControl.AgregarBoton(Icons.salida, new Command(() => {/* acción */}));
+        BotonesCarouselControl.AgregarBoton(Icons.tablero, new Command(() => {/* acción */}));
+        BotonesCarouselControl.AgregarBoton(Icons.servicio, new Command(() => {/* acción */}));
+        BotonesCarouselControl.AgregarBoton(Icons.Entrada, new Command(() => {/* acción */}));
+        BotonesCarouselControl.AgregarBoton(Icons.AboutUs, new Command(() => {/* acción */}));
+        BotonesCarouselControl.AgregarBoton(Icons.ContactUs, new Command(() => {/* acción */}));
+        BotonesCarouselControl.AgregarBoton(Icons.Dashboard, new Command(() => {/* acción */}));
+        BotonesCarouselControl.AgregarBoton(Icons.lista, new Command(() => {/* acción */}));
+        BotonesCarouselControl.AgregarBoton(Icons.Home, new Command(() => {/* acción */}));
+        //BotonesCarouselControl.QuitarUltimoBoton();
+
+    }
 
     private async void ToolbarItem_Clicked(object sender, EventArgs e)
     {

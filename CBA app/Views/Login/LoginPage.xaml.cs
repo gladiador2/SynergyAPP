@@ -94,41 +94,27 @@ public partial class LoginPage : ContentPage
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
                 var nodos = JsonNode.Parse(responseBody);
-
-                if (nodos["usuario"] != null)
+                // Verificar si existe el nodo "data"
+                if (nodos?["data"] != null)
                 {
-                    var usuarioNode = nodos["usuario"];
-                    var mSession = System.Text.Json.JsonSerializer.Deserialize<UsuarioModel>(nodos.ToString());
-                    //var userDetails = System.Text.Json.JsonSerializer.Deserialize<Usuario>(usuarioNode.ToString());
-
-                    using var doc = JsonDocument.Parse(responseBody);
-                    var root = doc.RootElement;
+                    var dataNode = nodos["data"];
                     
+                    var mSession = System.Text.Json.JsonSerializer.Deserialize<UsuarioModel>(dataNode.ToJsonString());
 
-                    //if (!SesionesClass.TieneAlgunPermiso(userDetails.roles))
-                    //{
-                    //   // await DisplayAlert("Oop! Algo salió mal.", $"{userDetails.nombre} {userDetails.apellido} no tiene permisos para la APP", "Ok");
-                    //    SinPermisoPage sinPermisoPage = new SinPermisoPage($"{userDetails.nombre} {userDetails.apellido} no tiene permisos para la APP");
-                    //    await Navigation.PushAsync(sinPermisoPage);
-                    //    return null;
-                    //}
-
-                    //if (Preferences.ContainsKey(nameof(App.UserDetails)))
-                    //{
-                    //    Preferences.Remove(nameof(App.UserDetails));
-                    //    SinPermisoPage sinPermisoPage = new SinPermisoPage($"{userDetails.usuario} ({userDetails.nombre} {userDetails.apellido}) no tiene permisos de acceso a la APP");
-                    //    await Navigation.PushAsync(sinPermisoPage);
-                    //  //  await DisplayAlert("Oop! Algo salió mal.", $"{userDetails.usuario} no tiene permisos para la APP", "Ok");
-                    //    return null;
-                    //}
-
+                    // Guardar detalles del usuario
                     var userDetailStr = JsonConvert.SerializeObject(mSession);
-
                     Preferences.Set(nameof(App.UserDetails), userDetailStr);
                     App.UserDetails = mSession;
 
                     return mSession;
                 }
+                // Si no existe "data" pero hay "message", mostrar el mensaje
+                else if (nodos?["message"] != null)
+                {
+                    var mensaje = nodos["message"]?.ToString() ?? "Error desconocido";
+                    await DisplayMensajes.MostrarMensajeError(mensaje);
+                }
+                
             }
             return null;
         }
