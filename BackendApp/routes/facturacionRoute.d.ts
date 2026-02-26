@@ -1,3 +1,3 @@
-declare const _default: (app: import("express").Express) => void;
-export default _default;
+declare const router: import("express-serve-static-core").Router;
+export default router;
 //# sourceMappingURL=facturacionRoute.d.ts.map

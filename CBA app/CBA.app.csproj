@@ -145,6 +145,9 @@
 	  <MauiXaml Update="Templates\BotonesCarousel.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Templates\BotonesCarouselView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Templates\FlyoutFooter.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -215,6 +218,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Controls\" />
+	  <Folder Include="Views\Configuracion\" />
 	</ItemGroup>
 
 </Project>

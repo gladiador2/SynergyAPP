@@ -257,41 +257,47 @@ router.post('/generateXMLDE', async (req, res) => {
     let estado = 'success';
     let errorMsg = null;
     let jsonId = null;
+    let xmlId = null;
+    let xml = '';
+    let signedXml = '';
     // Extraer el usuario del token JWT sin validar
-    const authHeader = req.headers['authorization'];
-    let usuarioID = null;
-    let token = undefined;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-        const parts = authHeader.split(' ');
-        token = parts.length === 2 ? parts[1] : undefined;
-    }
-    if (token) {
-        try {
-            // Solo decodifica el token, no valida la firma ni expiraci�n
-            const decoded = jwt.decode(token);
-            usuarioID = decoded?.id ?? null;
-        }
-        catch (err) {
-            usuarioID = null;
-        }
-    }
+    //const authHeader = req.headers['authorization'];
+    //let usuarioID: number | null = null;
+    //let token: string | undefined = undefined;
+    //if (authHeader && authHeader.startsWith('Bearer ')) {
+    //    const parts = authHeader.split(' ');
+    //    token = parts.length === 2 ? parts[1] : undefined;
+    //}
+    //if (token) {
+    //    try {
+    //        // Solo decodifica el token, no valida la firma ni expiraci�n
+    //        const decoded: any = jwt.decode(token);
+    //        usuarioID = decoded?.id ?? null;
+    //    } catch (err) {
+    //        usuarioID = null;
+    //    }
+    //}
     // Guardar el JSON recibido
     try {
-        const result = await pool.query(`INSERT INTO json_recibido (datos_json, estado, fecha_creacion, usuarioID) VALUES ($1, $2, NOW(), $3) RETURNING id`, [req.body, estado, usuarioID]);
+        const result = await pool.query(`INSERT INTO json_recibido (datos_json, estado, fecha_creacion, usuarioID) VALUES ($1, $2, NOW(), $3) RETURNING id`, 
+        //[req.body, estado, usuarioID]
+        [req.body, estado, 1]);
         jsonId = result.rows[0].id;
     }
     catch (err) {
         estado = 'error';
         errorMsg = err instanceof Error ? err.message : String(err);
-        await pool.query(`INSERT INTO json_recibido (datos_json, estado, error, fecha_creacion, usuarioID) VALUES ($1, $2, $3, NOW(), $4)`, [req.body, estado, errorMsg, usuarioID]);
+        await pool.query(`INSERT INTO json_recibido (datos_json, estado, error, fecha_creacion, usuarioID) VALUES ($1, $2, $3, NOW(), $4)`, 
+        //[req.body, estado, usuarioID]
+        [req.body, estado, errorMsg, 1]);
         return res.status(500).json({ success: false, error: errorMsg });
     }
     // Generar el XML
     try {
-        const xml = await DE.generateXMLDE(params, data, config);
+        xml = await DE.generateXMLDE(params, data, config);
         // Guardar el XML en la tabla xml_generado y relacionar con jsonId
-        await pool.query(`INSERT INTO xml_generado (datos_xml, json_id, fecha_creacion) VALUES ($1, $2, NOW())`, [xml, jsonId]);
-        res.json({ success: true, xml, jsonId });
+        const xmlResult = await pool.query(`INSERT INTO xml_generado (datos_xml, json_id, fecha_creacion) VALUES ($1, $2, NOW()) RETURNING id`, [xml, jsonId]);
+        xmlId = xmlResult.rows[0]?.id ?? null;
     }
     catch (error) {
         estado = 'error';
@@ -299,7 +305,43 @@ router.post('/generateXMLDE', async (req, res) => {
         if (jsonId) {
             await pool.query(`UPDATE json_recibido SET estado = $1, error = $2 WHERE id = $3`, [estado, errorMsg, jsonId]);
         }
-        res.status(500).json({ success: false, error: errorMsg, jsonId });
+        return res.status(500).json({ success: false, error: errorMsg, jsonId });
+    }
+    // Firmar el XML
+    try {
+        if (!xml) {
+            return res.status(500).json({ success: false, error: 'XML no generado', jsonId });
+        }
+        const certData = process.env.Certificado_p12;
+        const clave = process.env.Clave;
+        signedXml = await DESign.signXML(xml, certData, clave, true);
+        // Guardar el XML firmado en la tabla xml_firmado y relacionar con xml_generado_id
+        await pool.query(`INSERT INTO xml_firmado (xml_generado_id, datos_xml_firmado, estado, error, respuesta, fecha_creacion) VALUES ($1, $2, $3, $4, $5, NOW())`, [xmlId, signedXml, 'success', null, null]);
+    }
+    catch (error) {
+        // Si ocurre un error al firmar, actualiza el estado del JSON a 'error' y guarda el mensaje de error
+        estado = 'error';
+        errorMsg = error instanceof Error ? error.message : String(error);
+        await pool.query(`INSERT INTO xml_firmado (xml_generado_id, datos_xml_firmado, estado, error, respuesta, fecha_creacion) VALUES ($1, $2, $3, $4, $5, NOW())`, [xmlId, null, 'error', errorMsg, null]);
+        return res.status(500).json({ success: false, error: errorMsg, jsonId });
+    }
+    // genrar QR
+    try {
+        const idCSC = process.env.idCSC;
+        const CSC = process.env.CSC;
+        const env = process.env.Ambiente;
+        if (!idCSC || !CSC || !env) {
+            return res.status(500).json({ success: false, error: 'Variables de entorno de QR incompletas' });
+        }
+        if (env !== 'test' && env !== 'prod') {
+            return res.status(500).json({ success: false, error: 'Ambiente inválido' });
+        }
+        const result = await qrgen.generateQR(signedXml, idCSC, CSC, env);
+        return res.json({ success: true, data: result });
+    }
+    catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        return res.status(500).json({ success: false, error: errorMsg });
     }
 });
 /**
@@ -1208,7 +1250,14 @@ router.post('/qrgen/generateQR', async (req, res) => {
         res.status(500).json({ success: false, error: errorMessage });
     }
 });
-export default (app) => {
-    app.use('/facturacion', router);
-};
+import setapiRoutes from './setapiRoutes.js';
+import xmlsignRoutes from './xmlsignRoutes.js';
+import kudeRoutes from './kudeRoutes.js';
+import qrgenRoutes from './qrgenRoutes.js';
+// ...otros imports globales si son necesarios...
+router.use('/setapi', setapiRoutes);
+router.use('/xmlsign', xmlsignRoutes);
+router.use('/kude', kudeRoutes);
+router.use('/qrgen', qrgenRoutes);
+export default router;
 //# sourceMappingURL=facturacionRoute.js.map

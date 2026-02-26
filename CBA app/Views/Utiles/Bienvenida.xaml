@@ -20,7 +20,9 @@
         <ContentView VerticalOptions="Start">
             <templates:BotonesCarousel x:Name="BotonesCarouselControl" />
         </ContentView>
-        
+        <ContentView >
+            <templates:BotonesCarouselView x:Name="BotonesCarouselControlView" />
+        </ContentView>
 
         <!-- Drawer derecho -->
         <ContentView

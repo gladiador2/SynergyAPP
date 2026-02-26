@@ -1,0 +1,59 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Backend (JS)",
+      "cwd": "${workspaceFolder}/BackendApp",
+      "program": "${workspaceFolder}/BackendApp/app.js",
+      "runtimeArgs": ["--enable-source-maps", "--inspect-brk"],
+      "skipFiles": ["<node_internals>/**"],
+      "smartStep": true,
+      "justMyCode": false,
+      "outFiles": ["${workspaceFolder}/BackendApp/**/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to 9229",
+      "port": 9229,
+      "cwd": "${workspaceFolder}/BackendApp",
+      "skipFiles": ["<node_internals>/**"],
+      "smartStep": true,
+      "justMyCode": false
+    }
+    ,
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug TS (ts-node ESM)",
+      "cwd": "${workspaceFolder}/BackendApp",
+      "program": "${workspaceFolder}/BackendApp/app.ts",
+      "runtimeArgs": ["--loader", "ts-node/esm"],
+      "skipFiles": ["<node_internals>/**"],
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/BackendApp/**/*.js"],
+      "env": {
+        "TS_NODE_TRANSPILE_ONLY": "true",
+        "NODE_ENV": "development"
+      },
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/BackendApp/**",
+        "!**/node_modules/**"
+      ]
+    }
+    ,
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "npm run dev (terminal)",
+      "cwd": "${workspaceFolder}/BackendApp",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "sourceMaps": true
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { verificarToken } from './middleware/authMiddleware.js';
-//import verificarApiKey from './middleware/apiKeyMiddleware.js';
 import testRoute from './routes/testRoute.js';
 import authRoute from './routes/authRoute.js';
 import swaggerUi from 'swagger-ui-express';
@@ -13,6 +13,16 @@ import constantesRoute from './routes/constantesRoute.js';
 import logger from './logger.js';
 const app = express();
 const port = process.env.PORT || 3000;
+// Opciones CORS más permisivas para desarrollo
+const corsOptions = {
+    origin: (origin, callback) => {
+        // Permite cualquier origen en dev; ajusta a tu frontend en PROD
+        callback(null, true);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
 //// Middleware de logging simple
 //app.use((req, res, next) => {
 //    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
@@ -22,19 +32,26 @@ app.use((req, res, next) => {
     logger.info(`${req.method} ${req.url} IP:${req.ip}`);
     next();
 });
-// Protecci�n con Helmet
+// CORS primero (antes de Helmet y rate limit) y preflight explícito
+app.use(cors(corsOptions));
+// Preflight: el middleware cors maneja OPTIONS automáticamente; no registrar ruta global
+// Proteccin con Helmet
 app.use(helmet());
+// CORS: permite consumir la API desde otros orígenes (y evita errores en Swagger UI si el host cambia)
+app.use(cors());
 // Limitador de peticiones
 const limiter = rateLimit({
     windowMs: 60 * 1000, // 1 minuto
     max: 100,
     message: "�Uy, demasiadas peticiones! ",
     standardHeaders: true,
+    skip: (req) => req.method === 'OPTIONS',
     handler: (req, res) => {
         console.log(` IP ${req.ip} BLOQUEADA por rate limit!`);
         res.status(429).json({ error: "�Demasiadas peticiones!" });
     },
 });
+// Aplica rate limit después de CORS y Helmet, y omite OPTIONS
 app.use(limiter);
 const swaggerDefinition = {
     openapi: '3.0.0',
@@ -45,17 +62,12 @@ const swaggerDefinition = {
     },
     servers: [
         {
-            url: 'http://localhost:3000',
+            // Usar ruta relativa para que Swagger UI apunte siempre al mismo origen
+            url: '/',
         },
     ],
     components: {
         securitySchemes: {
-            ApiKeyAuth: {
-                type: 'apiKey',
-                in: 'header',
-                name: 'x-api-key',
-                description: 'API Key para autenticacion',
-            },
             BearerAuth: {
                 type: 'http',
                 scheme: 'bearer',
@@ -65,10 +77,9 @@ const swaggerDefinition = {
         },
     },
     // Puedes definir seguridad global o por endpoint
-    // security: [
-    //     { ApiKeyAuth: [] },
-    //     { BearerAuth: [] }
-    // ],
+    security: [
+        { BearerAuth: [] }
+    ],
 };
 const options = {
     swaggerDefinition,
@@ -80,11 +91,11 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Rutas p�blicas (no requieren token)
 authRoute(app);
 constantesRoute(app);
+app.use('/facturacion', facturacionRoute);
 // Middleware para proteger todas las rutas siguientes (JWT)
 app.use(verificarToken);
 // Rutas privadas (requieren token)
 testRoute(app);
-facturacionRoute(app);
 // Middleware para manejar errores
 app.use((err, req, res, next) => {
     logger.error(`Error en ${req.method} ${req.url}: ${err.message}`);

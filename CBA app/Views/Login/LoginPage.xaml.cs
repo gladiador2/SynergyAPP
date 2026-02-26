@@ -143,7 +143,10 @@ public partial class LoginPage : ContentPage
                 }
                 else
                 {
-                    await DisplayMensajes.MostrarMensajeError("No puede iniciar sesion");
+                    GuardarCredenciales(txtUsuario.Text, txtContraseña.Text);
+
+                    await AppConstant.AddFlyoutMenusDetails(); 
+                    //await DisplayMensajes.MostrarMensajeError("No puede iniciar sesion");
                 }
             }
             else

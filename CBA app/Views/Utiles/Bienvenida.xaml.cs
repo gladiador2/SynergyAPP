@@ -18,6 +18,16 @@ public partial class Bienvenida : ContentPage
         BotonesCarouselControl.AgregarBoton(Icons.Dashboard, new Command(() => {/* acción */}));
         BotonesCarouselControl.AgregarBoton(Icons.lista, new Command(() => {/* acción */}));
         BotonesCarouselControl.AgregarBoton(Icons.Home, new Command(() => {/* acción */}));
+
+        BotonesCarouselControlView.AgregarBoton(Icons.salida, new Command(() => {/* acción */}));
+        BotonesCarouselControlView.AgregarBoton(Icons.tablero, new Command(() => {/* acción */}));
+        BotonesCarouselControlView.AgregarBoton(Icons.servicio, new Command(() => {/* acción */}));
+        BotonesCarouselControlView.AgregarBoton(Icons.Entrada, new Command(() => {/* acción */}));
+        BotonesCarouselControlView.AgregarBoton(Icons.AboutUs, new Command(() => {/* acción */}));
+        BotonesCarouselControlView.AgregarBoton(Icons.ContactUs, new Command(() => {/* acción */}));
+        BotonesCarouselControlView.AgregarBoton(Icons.Dashboard, new Command(() => {/* acción */}));
+        BotonesCarouselControlView.AgregarBoton(Icons.lista, new Command(() => {/* acción */}));
+        BotonesCarouselControlView.AgregarBoton(Icons.Home, new Command(() => {/* acción */}));
         //BotonesCarouselControl.QuitarUltimoBoton();
 
     }

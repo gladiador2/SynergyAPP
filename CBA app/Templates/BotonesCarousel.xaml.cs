@@ -5,7 +5,7 @@ namespace CBA_app.Templates;
 
     public partial class BotonesCarousel : ContentView
 {
-    public ObservableCollection<BotonCarrusel> Botones { get; set; } = new();
+    public ObservableCollection<BotonScroll> Botones { get; set; } = new();
 
     public BotonesCarousel()
     {
@@ -15,7 +15,7 @@ namespace CBA_app.Templates;
 
     public void AgregarBoton(string Imagen, ICommand comando)
     {
-        Botones.Add(new BotonCarrusel { Imagen = Imagen, Comando = comando });
+        Botones.Add(new BotonScroll { Imagen = Imagen, Comando = comando });
     }
 
     public void QuitarUltimoBoton()
@@ -25,7 +25,7 @@ namespace CBA_app.Templates;
     }
 }
 
-public class BotonCarrusel
+public class BotonScroll
 {
     public string Imagen { get; set; }
     public ICommand Comando { get; set; }

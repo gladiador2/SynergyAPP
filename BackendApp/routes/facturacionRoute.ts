@@ -12,7 +12,7 @@ import jwt from 'jsonwebtoken';
 
 const Kude = kude.default;
 const qrgen = qr.default;
-const DE = xmlgen.default; // Acceso al objeto con los métodos
+const DE = xmlgen.default; // Acceso al objeto con los mï¿½todos
 const DESign = xmlsign.default;
 const router = Router();
 
@@ -23,7 +23,7 @@ const router = Router();
  *     tags:
  *       - xmlgen
  *     summary: Obtiene un departamento por ID
- *     description: Retorna la información de un departamento según su ID.
+ *     description: Retorna la informaciï¿½n de un departamento segï¿½n su ID.
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -42,7 +42,7 @@ const router = Router();
  *       200:
  *         description: Departamento encontrado
  *       400:
- *         description: ID inválido
+ *         description: ID invï¿½lido
  *       404:
  *         description: No encontrado
  */
@@ -67,7 +67,7 @@ router.post('/getDepartamento', (req: Request, res: Response) => {
  *     tags:
  *       - xmlgen
  *     summary: Obtiene un distrito por ID
- *     description: Retorna la información de un distrito según su ID.
+ *     description: Retorna la informaciï¿½n de un distrito segï¿½n su ID.
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -84,7 +84,7 @@ router.post('/getDepartamento', (req: Request, res: Response) => {
  *       200:
  *         description: Distrito encontrado
  *       400:
- *         description: ID inválido
+ *         description: ID invï¿½lido
  *       404:
  *         description: No encontrado
  */
@@ -108,7 +108,7 @@ router.post('/getDistrito', (req: Request, res: Response) => {
  *     tags:
  *       - xmlgen
  *     summary: Obtiene una ciudad por ID
- *     description: Retorna la información de una ciudad según su ID.
+ *     description: Retorna la informaciï¿½n de una ciudad segï¿½n su ID.
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -125,7 +125,7 @@ router.post('/getDistrito', (req: Request, res: Response) => {
  *       200:
  *         description: Ciudad encontrada
  *       400:
- *         description: ID inválido
+ *         description: ID invï¿½lido
  *       404:
  *         description: No encontrado
  */
@@ -149,7 +149,7 @@ router.post('/getCiudad', (req: Request, res: Response) => {
  *     tags:
  *       - xmlgen
  *     summary: Genera XML DE
- *     description: Genera el archivo XML del Documento Electrónico exigido por SIFEN en base a JSON. Requiere los objetos 'params' y 'data' según la estructura oficial.
+ *     description: Genera el archivo XML del Documento Electrï¿½nico exigido por SIFEN en base a JSON. Requiere los objetos 'params' y 'data' segï¿½n la estructura oficial.
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -161,10 +161,10 @@ router.post('/getCiudad', (req: Request, res: Response) => {
  *             properties:
  *               params:
  *                 type: object
- *                 description: Datos estáticos del contribuyente emisor.
+ *                 description: Datos estï¿½ticos del contribuyente emisor.
  *               data:
  *                 type: object
- *                 description: Datos variables para cada documento electrónico.
+ *                 description: Datos variables para cada documento electrï¿½nico.
  *               config:
  *                 type: object
  *                 description: Opciones adicionales (opcional).
@@ -264,32 +264,36 @@ router.post('/generateXMLDE', async (req: Request, res: Response) => {
     let errorMsg = null;
     let jsonId: number | null = null;
 
+    let xmlId: number | null = null;
+    let xml: string = '';
+    let signedXml: string = '';
     // Extraer el usuario del token JWT sin validar
-    const authHeader = req.headers['authorization'];
-    let usuarioID: number | null = null;
-    let token: string | undefined = undefined;
+    //const authHeader = req.headers['authorization'];
+    //let usuarioID: number | null = null;
+    //let token: string | undefined = undefined;
 
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-        const parts = authHeader.split(' ');
-        token = parts.length === 2 ? parts[1] : undefined;
-    }
+    //if (authHeader && authHeader.startsWith('Bearer ')) {
+    //    const parts = authHeader.split(' ');
+    //    token = parts.length === 2 ? parts[1] : undefined;
+    //}
 
-    if (token) {
-        try {
-            // Solo decodifica el token, no valida la firma ni expiración
-            const decoded: any = jwt.decode(token);
-            usuarioID = decoded?.id ?? null;
-        } catch (err) {
-            usuarioID = null;
-        }
-    }
+    //if (token) {
+    //    try {
+    //        // Solo decodifica el token, no valida la firma ni expiraciï¿½n
+    //        const decoded: any = jwt.decode(token);
+    //        usuarioID = decoded?.id ?? null;
+    //    } catch (err) {
+    //        usuarioID = null;
+    //    }
+    //}
 
 
     // Guardar el JSON recibido
     try {
         const result = await pool.query(
             `INSERT INTO json_recibido (datos_json, estado, fecha_creacion, usuarioID) VALUES ($1, $2, NOW(), $3) RETURNING id`,
-            [req.body, estado, usuarioID]
+            //[req.body, estado, usuarioID]
+            [req.body, estado, 1]
         );
         jsonId = result.rows[0].id;
     } catch (err) {
@@ -297,22 +301,22 @@ router.post('/generateXMLDE', async (req: Request, res: Response) => {
         errorMsg = err instanceof Error ? err.message : String(err);
         await pool.query(
             `INSERT INTO json_recibido (datos_json, estado, error, fecha_creacion, usuarioID) VALUES ($1, $2, $3, NOW(), $4)`,
-            [req.body, estado, errorMsg, usuarioID]
+            //[req.body, estado, usuarioID]
+            [req.body, estado, errorMsg, 1]
         );
         return res.status(500).json({ success: false, error: errorMsg });
     }
 
     // Generar el XML
     try {
-        const xml = await DE.generateXMLDE(params, data, config);
+        xml = await DE.generateXMLDE(params, data, config);
 
         // Guardar el XML en la tabla xml_generado y relacionar con jsonId
-        await pool.query(
-            `INSERT INTO xml_generado (datos_xml, json_id, fecha_creacion) VALUES ($1, $2, NOW())`,
+        const xmlResult = await pool.query(
+            `INSERT INTO xml_generado (datos_xml, json_id, fecha_creacion) VALUES ($1, $2, NOW()) RETURNING id`,
             [xml, jsonId]
         );
-
-        res.json({ success: true, xml, jsonId });
+        xmlId = xmlResult.rows[0]?.id ?? null;
     } catch (error) {
         estado = 'error';
         errorMsg = error instanceof Error ? error.message : String(error);
@@ -322,8 +326,55 @@ router.post('/generateXMLDE', async (req: Request, res: Response) => {
                 [estado, errorMsg, jsonId]
             );
         }
-        res.status(500).json({ success: false, error: errorMsg, jsonId });
+        return res.status(500).json({ success: false, error: errorMsg, jsonId });
     }
+    // Firmar el XML
+    try {
+        if (!xml) {
+            return res.status(500).json({ success: false, error: 'XML no generado', jsonId });
+        }
+
+        const certData = process.env.Certificado_p12;
+        const clave = process.env.Clave;
+        signedXml = await DESign.signXML(xml, certData, clave, true);
+
+        // Guardar el XML firmado en la tabla xml_firmado y relacionar con xml_generado_id
+        await pool.query(
+            `INSERT INTO xml_firmado (xml_generado_id, datos_xml_firmado, estado, error, respuesta, fecha_creacion) VALUES ($1, $2, $3, $4, $5, NOW())`,
+            [xmlId, signedXml, 'success', null, null]
+        );
+    } catch (error) {
+        // Si ocurre un error al firmar, actualiza el estado del JSON a 'error' y guarda el mensaje de error
+        estado = 'error';
+        errorMsg = error instanceof Error ? error.message : String(error);
+
+        await pool.query(
+            `INSERT INTO xml_firmado (xml_generado_id, datos_xml_firmado, estado, error, respuesta, fecha_creacion) VALUES ($1, $2, $3, $4, $5, NOW())`,
+            [xmlId, null, 'error', errorMsg, null]
+        );
+        return res.status(500).json({ success: false, error: errorMsg, jsonId });
+    }
+        // genrar QR
+    try { 
+        const idCSC = process.env.idCSC;
+        const CSC = process.env.CSC;
+        const env = process.env.Ambiente;
+
+        if (!idCSC || !CSC || !env) {
+            return res.status(500).json({ success: false, error: 'Variables de entorno de QR incompletas' });
+        }
+
+        if (env !== 'test' && env !== 'prod') {
+            return res.status(500).json({ success: false, error: 'Ambiente invÃ¡lido' });
+        }
+
+        const result = await qrgen.generateQR(signedXml, idCSC, CSC, env);
+       return res.json({ success: true, data: result });
+    }
+    catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        return res.status(500).json({ success: false, error: errorMsg });
+    } 
 });
 
 
@@ -336,8 +387,8 @@ router.post('/generateXMLDE', async (req: Request, res: Response) => {
  *   post:
  *     tags:
  *       - xmlgen
- *     summary: Genera XML Evento Cancelación
- *     description: Genera el XML para el evento de cancelación de un documento electrónico.
+ *     summary: Genera XML Evento Cancelaciï¿½n
+ *     description: Genera el XML para el evento de cancelaciï¿½n de un documento electrï¿½nico.
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -349,7 +400,7 @@ router.post('/generateXMLDE', async (req: Request, res: Response) => {
  *             properties:
  *               params:
  *                 type: object
- *                 description: Datos estáticos del contribuyente emisor.
+ *                 description: Datos estï¿½ticos del contribuyente emisor.
  *                 example:
  *                   version: 150
  *                   ruc: "80069563-1"
@@ -379,9 +430,9 @@ router.post('/generateXMLDE', async (req: Request, res: Response) => {
  *                       denominacion: "Sucursal 1"
  *               data:
  *                 type: object
- *                 description: Datos variables para el evento de cancelación.
+ *                 description: Datos variables para el evento de cancelaciï¿½n.
  *                 example:
- *                   motivo: "Cancelación por error"
+ *                   motivo: "Cancelaciï¿½n por error"
  *                   fecha: "2022-08-14T10:11:00"
  *                   documentoReferencia: "001-001-0000001"
  *               config:
@@ -420,7 +471,7 @@ router.post('/generateXMLEventoCancelacion', async (req: Request, res: Response)
  *   post:
  *     tags:
  *       - xmlgen
- *     summary: Genera XML Evento Inutilización
+ *     summary: Genera XML Evento Inutilizaciï¿½n
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -576,7 +627,7 @@ router.post('/generateXMLEventoDesconocimiento', async (req: Request, res: Respo
  *   post:
  *     tags:
  *       - xmlgen
- *     summary: Genera XML Evento Notificación
+ *     summary: Genera XML Evento Notificaciï¿½n
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -615,7 +666,7 @@ router.post('/generateXMLEventoNotificacion', async (req: Request, res: Response
  *   post:
  *     tags:
  *       - xmlgen
- *     summary: Genera XML Evento Nominación
+ *     summary: Genera XML Evento Nominaciï¿½n
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -654,7 +705,7 @@ router.post('/generateXMLEventoNominacion', async (req: Request, res: Response) 
  *   post:
  *     tags:
  *       - xmlgen
- *     summary: Genera XML Evento Actualización Datos Transporte
+ *     summary: Genera XML Evento Actualizaciï¿½n Datos Transporte
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -782,7 +833,7 @@ router.post('/setapi/consultaRUC', async (req: Request, res: Response) => {
  *   post:
  *     tags:
  *       - setapi
- *     summary: Consulta por número de lote
+ *     summary: Consulta por nï¿½mero de lote
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -914,7 +965,7 @@ router.post('/setapi/recibeLote', async (req: Request, res: Response) => {
  *   post:
  *     tags:
  *       - setapi
- *     summary: Envía evento XML
+ *     summary: Envï¿½a evento XML
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -986,7 +1037,7 @@ router.post('/xmlsign/signXML', async (req: Request, res: Response) => {
         const result = await DESign.signXML(xml, file, password, signByNodeJS);
         res.json({ success: true, data: result });
     } catch (error) {
-        // Si es un Error, envía el mensaje
+        // Si es un Error, envï¿½a el mensaje
         const errorMessage = error instanceof Error ? error.message : error;
         res.status(500).json({ success: false, error: errorMessage });
     }
@@ -999,7 +1050,7 @@ router.post('/xmlsign/signXML', async (req: Request, res: Response) => {
  *   post:
  *     tags:
  *       - xmlsign
- *     summary: Firma múltiples XMLs
+ *     summary: Firma mï¿½ltiples XMLs
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -1028,7 +1079,7 @@ router.post('/xmlsign/signXMLFiles', async (req: Request, res: Response) => {
         const result = await DESign.signXMLFiles(xmls, file, password, signByNodeJS);
         res.json({ success: true, data: result });
     } catch (error) {
-        // Si es un Error, envía el mensaje
+        // Si es un Error, envï¿½a el mensaje
         const errorMessage = error instanceof Error ? error.message : error;
         res.status(500).json({ success: false, error: errorMessage });
     }
@@ -1069,7 +1120,7 @@ router.post('/xmlsign/signXMLEvento', async (req: Request, res: Response) => {
         const result = await DESign.signXMLEvento(xml, file, password, signByNodeJS);
         res.json({ success: true, data: result });
     } catch (error) {
-        // Si es un Error, envía el mensaje
+        // Si es un Error, envï¿½a el mensaje
         const errorMessage = error instanceof Error ? error.message : error;
         res.status(500).json({ success: false, error: errorMessage });
     }
@@ -1110,7 +1161,7 @@ router.post('/xmlsign/signXMLRecibo', async (req: Request, res: Response) => {
         const result = await DESign.signXMLRecibo(xml, file, password, signByNodeJS);
         res.json({ success: true, data: result });
     } catch (error) {
-        // Si es un Error, envía el mensaje
+        // Si es un Error, envï¿½a el mensaje
         const errorMessage = error instanceof Error ? error.message : error;
         res.status(500).json({ success: false, error: errorMessage });
     }
@@ -1122,7 +1173,7 @@ router.post('/xmlsign/signXMLRecibo', async (req: Request, res: Response) => {
  *   post:
  *     tags:
  *       - xmlsign
- *     summary: Obtiene la fecha de expiración del certificado
+ *     summary: Obtiene la fecha de expiraciï¿½n del certificado
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -1140,7 +1191,7 @@ router.post('/xmlsign/signXMLRecibo', async (req: Request, res: Response) => {
  *             password: "123456"
  *             useNodeJS: true
  *     responses:
- *       200: { description: Fecha de expiración }
+ *       200: { description: Fecha de expiraciï¿½n }
  *       500: { description: Error interno }
  */
 router.post('/xmlsign/getExpiration', async (req: Request, res: Response) => {
@@ -1149,7 +1200,7 @@ router.post('/xmlsign/getExpiration', async (req: Request, res: Response) => {
         const result = await DESign.getExpiration(file, password, useNodeJS);
         res.json({ success: true, data: result });
     } catch (error) {
-        // Si es un Error, envía el mensaje
+        // Si es un Error, envï¿½a el mensaje
         const errorMessage = error instanceof Error ? error.message : error;
         res.status(500).json({ success: false, error: errorMessage });
     }
@@ -1173,7 +1224,7 @@ router.post('/xmlsign/getExpiration', async (req: Request, res: Response) => {
  *               java8Path: { type: string, description: "Ruta al ejecutable de Java 8" }
  *               xmlSigned: { type: string, description: "XML firmado" }
  *               urlLogo: { type: string, description: "URL del logo a mostrar en el PDF" }
- *               ambiente: { type: string, description: "Ambiente de generación (ej: test, prod)" }
+ *               ambiente: { type: string, description: "Ambiente de generaciï¿½n (ej: test, prod)" }
  *           example:
  *             java8Path: "/usr/bin/java"
  *             xmlSigned: "<xml>...</xml>"
@@ -1189,7 +1240,7 @@ router.post('/kude/generateKUDE', async (req: Request, res: Response) => {
         const result = await Kude.generateKUDE(java8Path, xmlSigned, urlLogo, ambiente);
         res.json({ success: true, data: result });
     } catch (error) {
-        // Si es un Error, envía el mensaje
+        // Si es un Error, envï¿½a el mensaje
         const errorMessage = error instanceof Error ? error.message : error;
         res.status(500).json({ success: false, error: errorMessage });
     }
@@ -1211,9 +1262,9 @@ router.post('/kude/generateKUDE', async (req: Request, res: Response) => {
  *             type: object
  *             properties:
  *               xmlSigned: { type: string, description: "XML firmado" }
- *               idCSC: { type: string, description: "Identificador del Código de Seguridad del Contribuyente" }
- *               CSC: { type: string, description: "Código de Seguridad del Contribuyente" }
- *               env: { type: string, enum: [test, prod], description: "Ambiente de generación" }
+ *               idCSC: { type: string, description: "Identificador del Cï¿½digo de Seguridad del Contribuyente" }
+ *               CSC: { type: string, description: "Cï¿½digo de Seguridad del Contribuyente" }
+ *               env: { type: string, enum: [test, prod], description: "Ambiente de generaciï¿½n" }
  *           example:
  *             xmlSigned: "<xml>...</xml>"
  *             idCSC: "IDCSC123"
@@ -1229,14 +1280,22 @@ router.post('/qrgen/generateQR', async (req: Request, res: Response) => {
         const result = await qrgen.generateQR(xmlSigned, idCSC, CSC, env);
         res.json({ success: true, data: result });
     } catch (error) {
-        // Si es un Error, envía el mensaje
+        // Si es un Error, envï¿½a el mensaje
         const errorMessage = error instanceof Error ? error.message : error;
         res.status(500).json({ success: false, error: errorMessage });
     }
 });
 
+import setapiRoutes from './setapiRoutes.js';
+import xmlsignRoutes from './xmlsignRoutes.js';
+import kudeRoutes from './kudeRoutes.js';
+import qrgenRoutes from './qrgenRoutes.js';
 
+// ...otros imports globales si son necesarios...
 
-export default (app: import('express').Express) => {
-    app.use('/facturacion', router);
-};
+router.use('/setapi', setapiRoutes);
+router.use('/xmlsign', xmlsignRoutes);
+router.use('/kude', kudeRoutes);
+router.use('/qrgen', qrgenRoutes);
+
+export default router;

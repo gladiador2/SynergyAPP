@@ -19,4 +19,9 @@ public partial class PerfilPage : ContentPage
         //EntryAbreviatura.Text = App.UserDetails.sucursal.abreviatura;
 
     }
+
+    private async void BtnFlotanteIzquierda_Clicked(object sender, EventArgs e)
+    {
+        await Navigation.PopAsync();
+    }
 }
