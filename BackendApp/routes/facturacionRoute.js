@@ -6,11 +6,39 @@ import kude from 'facturacionelectronicapy-kude';
 import qr from 'facturacionelectronicapy-qrgen';
 import pool from '../db.js';
 import jwt from 'jsonwebtoken';
+import { parseStringPromise } from "xml2js";
 const Kude = kude.default;
 const qrgen = qr.default;
 const DE = xmlgen.default; // Acceso al objeto con los m�todos
 const DESign = xmlsign.default;
 const router = Router();
+const TIPOS_DOCUMENTOS = {
+    1: 'Factura electrónica',
+    2: 'Factura electrónica de exportación',
+    3: 'Factura electrónica de importación',
+    4: 'Autofactura electrónica',
+    5: 'Nota de crédito electrónica',
+    6: 'Nota de débito electrónica',
+    7: 'Nota de remisión electrónica',
+    8: 'Comprobante de retención electrónico',
+};
+function extractDocumentoData(body) {
+    if (!body || typeof body !== 'object') {
+        return { documento: null, tipoDe: null };
+    }
+    const payload = body;
+    const data = payload.data;
+    if (!data || typeof data !== 'object') {
+        return { documento: null, tipoDe: null };
+    }
+    const establecimiento = typeof data.establecimiento === 'string' ? data.establecimiento : null;
+    const punto = typeof data.punto === 'string' ? data.punto : null;
+    const numero = typeof data.numero === 'string' ? data.numero : null;
+    const documento = establecimiento && punto && numero ? `${establecimiento}-${punto}-${numero}` : null;
+    const tipoDocumento = typeof data.tipoDocumento === 'number' ? data.tipoDocumento : null;
+    const tipoDe = tipoDocumento !== null ? TIPOS_DOCUMENTOS[tipoDocumento] ?? null : null;
+    return { documento, tipoDe };
+}
 /**
  * @swagger
  * /facturacion/getDepartamento:
@@ -138,10 +166,69 @@ router.post('/getCiudad', (req, res) => {
 });
 /**
  * @swagger
+ * /facturacion/setapi/consultaRUC:
+ *   post:
+ *     tags:
+ *       - Facturacion
+ *     summary: Consulta por RUC
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id: { type: number }
+ *               ruc: { type: string }
+ *
+ *               config: { type: object }
+ *           example:
+ *             id: 1
+ *             ruc: "3563476"
+ *             config: {}
+ *     responses:
+ *       200: { description: Respuesta exitosa }
+ *       500: { description: Error interno }
+ */
+router.post('/setapi/consultaRUC', async (req, res) => {
+    const { id, ruc, config } = req.body;
+    try {
+        const certData = process.env.Certificado_p12;
+        const clave = process.env.Clave;
+        const env = process.env.Ambiente;
+        if (!certData || !clave || !env) {
+            return res.status(500).json({ success: false, error: 'Variables de entorno incompletas' });
+        }
+        if (env !== 'test' && env !== 'prod') {
+            return res.status(500).json({ success: false, error: 'Ambiente inválido' });
+        }
+        const result = await apiset.default.consultaRUC(id, ruc, env, certData, clave, config);
+        const data = typeof result === 'string' ? await parseStringPromise(result, { explicitArray: false }) : result;
+        res.json({ success: true, data });
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error ? error.message : error;
+        res.status(500).json({ success: false, error: errorMessage });
+    }
+});
+function normalizeXML(xml) {
+    xml = xml.split('\r\n').join('');
+    xml = xml.split('\n').join('');
+    xml = xml.split('\t').join('');
+    xml = xml.split('    ').join('');
+    xml = xml.split('>    <').join('><');
+    xml = xml.split('>  <').join('><');
+    xml = xml.replace(/\r?\n|\r/g, '');
+    return xml;
+}
+/**
+ * @swagger
  * /facturacion/generateXMLDE:
  *   post:
  *     tags:
- *       - xmlgen
+ *        - Facturacion
  *     summary: Genera XML DE
  *     description: Genera el archivo XML del Documento Electr�nico exigido por SIFEN en base a JSON. Requiere los objetos 'params' y 'data' seg�n la estructura oficial.
  *     security:
@@ -259,7 +346,17 @@ router.post('/generateXMLDE', async (req, res) => {
     let jsonId = null;
     let xmlId = null;
     let xml = '';
+    let normalizedXml = '';
     let signedXml = '';
+    let xmlResult = '';
+    const idCSC = process.env.idCSC;
+    const CSC = process.env.CSC;
+    const env = process.env.Ambiente;
+    const certData = process.env.Certificado_p12;
+    const clave = process.env.Clave;
+    if (!certData || !clave) {
+        return res.status(500).json({ success: false, error: 'Variables de entorno de certificado incompletas' });
+    }
     // Extraer el usuario del token JWT sin validar
     //const authHeader = req.headers['authorization'];
     //let usuarioID: number | null = null;
@@ -278,25 +375,27 @@ router.post('/generateXMLDE', async (req, res) => {
     //    }
     //}
     // Guardar el JSON recibido
+    const { documento, tipoDe } = extractDocumentoData(req.body);
     try {
-        const result = await pool.query(`INSERT INTO json_recibido (datos_json, estado, fecha_creacion, usuarioID) VALUES ($1, $2, NOW(), $3) RETURNING id`, 
+        const result = await pool.query(`INSERT INTO json_recibido (datos_json, estado, documento, tipo_de, fecha_creacion, usuarioID) VALUES ($1, $2, $3, $4, NOW(), $5) RETURNING id`, 
         //[req.body, estado, usuarioID]
-        [req.body, estado, 1]);
+        [req.body, estado, documento, tipoDe, 1]);
         jsonId = result.rows[0].id;
     }
     catch (err) {
         estado = 'error';
         errorMsg = err instanceof Error ? err.message : String(err);
-        await pool.query(`INSERT INTO json_recibido (datos_json, estado, error, fecha_creacion, usuarioID) VALUES ($1, $2, $3, NOW(), $4)`, 
+        await pool.query(`INSERT INTO json_recibido (datos_json, estado, error, documento, tipo_de, fecha_creacion, usuarioID) VALUES ($1, $2, $3, $4, $5, NOW(), $6)`, 
         //[req.body, estado, usuarioID]
-        [req.body, estado, errorMsg, 1]);
+        [req.body, estado, errorMsg, documento, tipoDe, 1]);
         return res.status(500).json({ success: false, error: errorMsg });
     }
     // Generar el XML
     try {
         xml = await DE.generateXMLDE(params, data, config);
+        normalizedXml = normalizeXML(xml);
         // Guardar el XML en la tabla xml_generado y relacionar con jsonId
-        const xmlResult = await pool.query(`INSERT INTO xml_generado (datos_xml, json_id, fecha_creacion) VALUES ($1, $2, NOW()) RETURNING id`, [xml, jsonId]);
+        const xmlResult = await pool.query(`INSERT INTO xml_generado (datos_xml, json_id, fecha_creacion) VALUES ($1, $2, NOW()) RETURNING id`, [normalizedXml, jsonId]);
         xmlId = xmlResult.rows[0]?.id ?? null;
     }
     catch (error) {
@@ -309,12 +408,10 @@ router.post('/generateXMLDE', async (req, res) => {
     }
     // Firmar el XML
     try {
-        if (!xml) {
+        if (!normalizedXml) {
             return res.status(500).json({ success: false, error: 'XML no generado', jsonId });
         }
-        const certData = process.env.Certificado_p12;
-        const clave = process.env.Clave;
-        signedXml = await DESign.signXML(xml, certData, clave, true);
+        signedXml = await DESign.signXML(normalizedXml, certData, clave, true);
         // Guardar el XML firmado en la tabla xml_firmado y relacionar con xml_generado_id
         await pool.query(`INSERT INTO xml_firmado (xml_generado_id, datos_xml_firmado, estado, error, respuesta, fecha_creacion) VALUES ($1, $2, $3, $4, $5, NOW())`, [xmlId, signedXml, 'success', null, null]);
     }
@@ -325,23 +422,61 @@ router.post('/generateXMLDE', async (req, res) => {
         await pool.query(`INSERT INTO xml_firmado (xml_generado_id, datos_xml_firmado, estado, error, respuesta, fecha_creacion) VALUES ($1, $2, $3, $4, $5, NOW())`, [xmlId, null, 'error', errorMsg, null]);
         return res.status(500).json({ success: false, error: errorMsg, jsonId });
     }
+    if (!idCSC || !CSC || !env) {
+        return res.status(500).json({ success: false, error: 'Variables de entorno de QR incompletas' });
+    }
+    if (env !== 'test' && env !== 'prod') {
+        return res.status(500).json({ success: false, error: 'Ambiente inválido' });
+    }
     // genrar QR
     try {
-        const idCSC = process.env.idCSC;
-        const CSC = process.env.CSC;
-        const env = process.env.Ambiente;
-        if (!idCSC || !CSC || !env) {
-            return res.status(500).json({ success: false, error: 'Variables de entorno de QR incompletas' });
-        }
-        if (env !== 'test' && env !== 'prod') {
-            return res.status(500).json({ success: false, error: 'Ambiente inválido' });
-        }
         const result = await qrgen.generateQR(signedXml, idCSC, CSC, env);
-        return res.json({ success: true, data: result });
+        xmlResult = normalizeXML(result);
     }
     catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error);
         return res.status(500).json({ success: false, error: errorMsg });
+    }
+    //Enviar el XML a SIFEN usando SET API
+    /* try {
+         if (jsonId === null) {
+             return res.status(500).json({ success: false, error: 'jsonId no generado' });
+         }
+ 
+         const result = await apiset.default.recibe(jsonId, xmlResult, env, certData, clave, config);
+         const data = typeof result === 'string' ? await parseStringPromise(result, { explicitArray: false }) : result;
+         res.json({ success: true, data });
+     } catch (error) {
+         const errorMsg = error instanceof Error ? error.message : String(error);
+         res.status(500).json({ success: false, error: errorMsg });
+     }
+         */
+    //generar kude utilizando kude
+    try {
+        const urlLogo = process.env.logo;
+        const java8Path = process.env.java8path;
+        const srcJasper = process.env.srcJasper;
+        const destFolder = process.env.destFolder;
+        const ambiente = process.env.AMBIENTE;
+        const xml = process.env.xmlSigned;
+        if (!java8Path || !urlLogo || !ambiente || !srcJasper || !destFolder || !xml) {
+            return res.status(500).json({ success: false, error: 'Variables de entorno de KUDE incompletas' });
+        }
+        const normalizedUrlLogo = urlLogo.trim();
+        if (/\s/.test(normalizedUrlLogo)) {
+            return res.status(400).json({
+                success: false,
+                error: "La ruta 'logo' contiene espacios. Usa una ruta sin espacios o una URL sin espacios."
+            });
+        }
+        const normalizedSrcJasper = /[\\\/]$/.test(srcJasper) ? srcJasper : `${srcJasper}\\`;
+        const jsonParm = `{"logo":"${normalizedUrlLogo}"}`;
+        const kudeResult = await Kude.generateKUDE(java8Path, xml, normalizedSrcJasper, destFolder, jsonParm);
+        res.json({ success: true, xml: signedXml, kude: kudeResult });
+    }
+    catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        res.status(500).json({ success: false, error: errorMsg });
     }
 });
 /**
@@ -738,50 +873,6 @@ router.post('/setapi/consulta', async (req, res) => {
     const { id, cdc, env, cert, key, config } = req.body;
     try {
         const result = await apiset.default.consulta(id, cdc, env, cert, key, config);
-        res.json({ success: true, data: result });
-    }
-    catch (error) {
-        const errorMessage = error instanceof Error ? error.message : error;
-        res.status(500).json({ success: false, error: errorMessage });
-    }
-});
-/**
- * @swagger
- * /facturacion/setapi/consultaRUC:
- *   post:
- *     tags:
- *       - setapi
- *     summary: Consulta por RUC
- *     security:
- *       - ApiKeyAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               id: { type: number }
- *               ruc: { type: string }
- *               env: { type: string, enum: [test, prod] }
- *               cert: { type: string }
- *               key: { type: string }
- *               config: { type: object }
- *           example:
- *             id: 1
- *             ruc: "80000001-5"
- *             env: "test"
- *             cert: "CERT_DATA"
- *             key: "KEY_DATA"
- *             config: {}
- *     responses:
- *       200: { description: Respuesta exitosa }
- *       500: { description: Error interno }
- */
-router.post('/setapi/consultaRUC', async (req, res) => {
-    const { id, ruc, env, cert, key, config } = req.body;
-    try {
-        const result = await apiset.default.consultaRUC(id, ruc, env, cert, key, config);
         res.json({ success: true, data: result });
     }
     catch (error) {
@@ -1200,7 +1291,15 @@ router.post('/xmlsign/getExpiration', async (req, res) => {
 router.post('/kude/generateKUDE', async (req, res) => {
     const { java8Path, xmlSigned, urlLogo, ambiente } = req.body;
     try {
-        const result = await Kude.generateKUDE(java8Path, xmlSigned, urlLogo, ambiente);
+        const normalizedUrlLogo = typeof urlLogo === 'string' ? urlLogo.trim() : '';
+        if (/\s/.test(normalizedUrlLogo)) {
+            return res.status(400).json({
+                success: false,
+                error: "El parámetro 'urlLogo' contiene espacios. Usa una ruta/URL sin espacios."
+            });
+        }
+        const jsonParm = "{\"logo\":\"empresa.png\"}";
+        const result = await Kude.generateKUDE(java8Path, xmlSigned, normalizedUrlLogo, ambiente, jsonParm);
         res.json({ success: true, data: result });
     }
     catch (error) {

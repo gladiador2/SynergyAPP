@@ -8,14 +8,18 @@ import testRoute from './routes/testRoute.js';
 import authRoute from './routes/authRoute.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import facturacionRoute from './routes/facturacionRoute.js';
 import constantesRoute from './routes/constantesRoute.js';
+import apiRoute from './routes/apiRoute.js';
 import logger from './logger.js';
 import type { Request, Response, NextFunction } from 'express';
 
 
 const app = express();
 const port = process.env.PORT || 3000;
+const swaggerServerUrl = process.env.SWAGGER_SERVER_URL || `http://localhost:${port}`;
 
 // Opciones CORS más permisivas para desarrollo
 const corsOptions: cors.CorsOptions = {
@@ -72,10 +76,18 @@ const swaggerDefinition = {
         version: '1.0.0',
         description: 'Documentacion de la API de Facturacion',
     },
+    tags: [
+        { name: 'Facturacion' },
+        { name: 'xmlgen' },
+        { name: 'setapi' },
+        { name: 'xmlsign' },
+        { name: 'kude' },
+        { name: 'qrgen' }
+    ],
     servers: [
         {
-            // Usar ruta relativa para que Swagger UI apunte siempre al mismo origen
-            url: '/',
+            // URL absoluta para evitar esquemas inválidos (file://, ws://) en Swagger UI
+            url: swaggerServerUrl,
         },
     ],
     components: {
@@ -94,9 +106,15 @@ const swaggerDefinition = {
         
      ],
 };
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const options = {
     swaggerDefinition,
-    apis: ['./routes/*.ts'], // Aseg�rate que la ruta incluya facturacionRoute.ts
+    apis: [
+        path.join(__dirname, 'routes', '*.ts').replace(/\\/g, '/'),
+        path.join(__dirname, 'routes', '*.js').replace(/\\/g, '/')
+    ],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
@@ -107,6 +125,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 authRoute(app);
 constantesRoute(app);
 app.use('/facturacion', facturacionRoute);
+app.use('/api', apiRoute);
 // Middleware para proteger todas las rutas siguientes (JWT)
 app.use(verificarToken);
 

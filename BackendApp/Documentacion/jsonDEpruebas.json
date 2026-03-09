@@ -1,0 +1,103 @@
+{
+  "params": {
+    "version": "150",
+    "ruc": "3211134-7",
+    "razonSocial": "ALBRECHT ROMAN MARIANO ADOLFO",
+    "nombreFantasia": "ALBRECHT ROMAN MARIANO ADOLFO",
+    "tipoContribuyente": 1,
+    "tipoRegimen": 8,
+    "timbradoNumero": "18643855",
+    "timbradoFecha": "2026-02-10",
+    "establecimientos": [
+      {
+        "codigo": "001",
+        "direccion": "SAN ANTONIO KM 29",
+        "numeroCasa": "0",
+        "complementoDireccion1": "Barrio Centro",
+        "complementoDireccion2": "",
+        "departamento": 7,
+        "distrito": 79,
+        "ciudad": 5802,
+        "telefono": "0985986717",
+        "email": "consultoriaacuarius1823@gmail.com",
+        "denominacion": "CASA CENTRAL"
+      }
+    ],
+    "actividadesEconomicas": [
+      {
+        "codigo": "47300",
+        "descripcion": "COMERCIO AL POR MENOR DE COMBUSTIBLE PARA VEHÍCULOS AUTOMOTORES EN COMERCIOS ESPECIALIZADOS"
+      },
+      {
+        "codigo": "10103",
+        "descripcion": "ELABORACIÓN DE FIAMBRES Y EMBUTIDOS"
+      },
+      {
+        "codigo": "46301",
+        "descripcion": "COMERCIO AL POR MAYOR DE CARNE, MENUDENCIAS Y PRODUCTOS DERIVADOS"
+      }
+    ]
+  },
+  "data": {
+    "tipoDocumento": 1,
+    "establecimiento": "001",
+    "codigoSeguridadAleatorio": "298398",
+    "punto": "001",
+    "numero": "0000001",
+    "fecha": "2026-02-12T10:00:00",
+    "tipoEmision": 1,
+    "tipoTransaccion": 1,
+    "tipoImpuesto": 1,
+    "moneda": "PYG",
+    "cliente": {
+      "contribuyente": false,
+      "tipoContribuyente": 1,
+      "documentoTipo": 1,
+      "documentoNumero": "4444440",
+      "razonSocial": "CONSUMIDOR FINAL",
+      "nombreFantasia": "CONSUMIDOR FINAL",
+      "direccion": "SIN DIRECCION",
+      "numeroCasa": "0",
+      "departamento": 7,
+      "distrito": 79,
+      "ciudad": 5802,
+      "pais": "PRY",
+      "tipoOperacion": 2,
+      "telefono": "021000000",
+      "email": "cliente@test.com",
+      "codigo": "CF001"
+    },
+    "items": [
+      {
+        "codigo": "A-001",
+        "descripcion": "COMBUSTIBLE TIPO A",
+        "cantidad": 10,
+        "precioUnitario": 7500,
+        "unidadMedida": 89,
+        "ivaTipo": 1,
+        "ivaBase": 100,
+        "iva": 10
+      }
+    ],
+    "factura": {
+      "presencia": 1
+    },
+    "condicion": {
+      "tipo": 1,
+      "entregas": [
+        {
+          "tipo": 1,
+          "monto": 75000,
+          "moneda": "PYG"
+        }
+      ]
+    }
+  },
+  "config": {
+    "defaultValues": true,
+    "decimals": 2,
+    "taxDecimals": 2,
+    "pygDecimals": 0,
+    "userObjectRemove": false
+  }
+}
