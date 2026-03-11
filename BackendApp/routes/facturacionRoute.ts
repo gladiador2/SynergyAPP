@@ -480,7 +480,7 @@ router.post('/generateXMLDE', async (req: Request, res: Response) => {
     try { 
         
 
-        const result = await qrgen.generateQR(signedXml, idCSC, CSC, env);
+        const result = await qrgen.generateQR(normalizeXML(signedXml), idCSC, CSC, env);
         xmlResult = normalizeXML(result);
        
     }
@@ -489,21 +489,21 @@ router.post('/generateXMLDE', async (req: Request, res: Response) => {
         return res.status(500).json({ success: false, error: errorMsg });
     } 
     //Enviar el XML a SIFEN usando SET API
-   /* try {
+   try {
         if (jsonId === null) {
             return res.status(500).json({ success: false, error: 'jsonId no generado' });
         }
 
-        const result = await apiset.default.recibe(jsonId, xmlResult, env, certData, clave, config);
+        const result = await apiset.default.recibeLote(jsonId, [xmlResult], env, certData, clave, config);
         const data = typeof result === 'string' ? await parseStringPromise(result, { explicitArray: false }) : result;
         res.json({ success: true, data });
     } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error);
         res.status(500).json({ success: false, error: errorMsg });
     }
-        */
+        
        //generar kude utilizando kude
-         try {
+        /* try {
                 const urlLogo = process.env.logo;
                     const java8Path = process.env.java8path;
                     const srcJasper = process.env.srcJasper;
@@ -532,7 +532,7 @@ router.post('/generateXMLDE', async (req: Request, res: Response) => {
         } catch (error) {
             const errorMsg = error instanceof Error ? error.message : String(error);
             res.status(500).json({ success: false, error: errorMsg });
-        }
+        }*/
 });
 
 

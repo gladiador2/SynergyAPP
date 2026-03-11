@@ -51,9 +51,10 @@ function extractSifenStatusAndError(respuestaSifen) {
     }
     const payload = respuestaSifen;
     const protDe = payload['ns2:rRetEnviDe']?.['ns2:rProtDe'];
-    const estadoRaw = protDe?.['ns2:dEstRes'];
-    const msgResRaw = protDe?.['ns2:gResProc']?.['ns2:dMsgRes'];
-    const msgReRaw = protDe?.['ns2:gResProc']?.['ns2:dMsgRe'];
+    const lote = payload['ns2:rResEnviLoteDe'];
+    const estadoRaw = protDe?.['ns2:dEstRes'] ?? lote?.['ns2:dEstRes'];
+    const msgResRaw = protDe?.['ns2:gResProc']?.['ns2:dMsgRes'] ?? lote?.['ns2:gResProc']?.['ns2:dMsgRes'] ?? lote?.['ns2:dMsgRes'];
+    const msgReRaw = protDe?.['ns2:gResProc']?.['ns2:dMsgRe'] ?? lote?.['ns2:gResProc']?.['ns2:dMsgRe'];
     const estado = typeof estadoRaw === 'string' && estadoRaw.trim() !== '' ? estadoRaw.trim() : 'sifen_unknown';
     const error = typeof msgResRaw === 'string' && msgResRaw.trim() !== ''
         ? msgResRaw.trim()
@@ -90,6 +91,28 @@ async function enviarASifenConReintentos(jsonId, xmlConQr, certData, clave, ambi
         }
     }
     throw new Error('No se pudo completar el envio a SIFEN luego de varios reintentos');
+}
+async function enviarASifenLoteConReintentos(jsonId, xmlConQr, certData, clave, ambiente, config) {
+    const retryOptions = getRetryOptionsFromEnv();
+    for (let attempt = 1; attempt <= retryOptions.maxRetries; attempt++) {
+        try {
+            const rawRespuestaSifen = await setApiClient.recibeLote(jsonId, [xmlConQr], ambiente, certData, clave, config);
+            const parsed = typeof rawRespuestaSifen === 'string'
+                ? await parseStringPromise(rawRespuestaSifen, { explicitArray: false })
+                : rawRespuestaSifen;
+            return parsed;
+        }
+        catch (error) {
+            const retryable = isRetryableSifenError(error);
+            const isLastAttempt = attempt === retryOptions.maxRetries;
+            if (!retryable || isLastAttempt) {
+                throw error;
+            }
+            await updateJsonRecibidoEstado(jsonId, `sifen_lote_retry_${attempt}`, toErrorMessage(error));
+            await sleep(computeRetryDelay(attempt, retryOptions));
+        }
+    }
+    throw new Error('No se pudo completar el envio por lote a SIFEN luego de varios reintentos');
 }
 export async function recibirJsonYGenerarXmlInicial(input) {
     const { body, usuarioId } = input;
@@ -192,6 +215,36 @@ export async function procesarFlujoAsincronoSifen(input) {
         throw new HttpError(500, errorMsg, { jsonId: input.jsonId });
     }
 }
+export async function procesarFlujoAsincronoSifenLote(input) {
+    const sifenConfig = loadSifenConfig();
+    const kudeConfig = loadKudeConfig();
+    await updateJsonRecibidoEstado(input.jsonId, 'sifen_lote_processing', null);
+    let respuestaSifen;
+    try {
+        respuestaSifen = await enviarASifenLoteConReintentos(input.jsonId, input.xmlConQr, sifenConfig.certData, sifenConfig.clave, sifenConfig.ambiente, input.config);
+        const sifenResult = extractSifenStatusAndError(respuestaSifen);
+        await updateXmlFirmadoRespuestaByXmlGeneradoId(input.xmlGeneradoId, sifenResult.estado, JSON.stringify(respuestaSifen), sifenResult.error);
+        await updateJsonRecibidoEstado(input.jsonId, sifenResult.estado, sifenResult.error);
+    }
+    catch (error) {
+        const errorMsg = toErrorMessage(error);
+        await updateJsonRecibidoError(input.jsonId, 'error', errorMsg);
+        throw new HttpError(502, `Fallo de comunicacion con SIFEN (lote): ${errorMsg}`, { jsonId: input.jsonId });
+    }
+    try {
+        const jsonParm = `{"logo":"${kudeConfig.logo}"}`;
+        const kudeResult = await Kude.generateKUDE(kudeConfig.java8Path, path.join(XML_PRE_SIFEN_DIR, `de-${input.jsonId}.xml`), kudeConfig.srcJasper, kudeConfig.destFolder, jsonParm);
+        return {
+            respuestaSifen,
+            kude: kudeResult,
+        };
+    }
+    catch (error) {
+        const errorMsg = toErrorMessage(error);
+        await updateJsonRecibidoError(input.jsonId, 'error', errorMsg);
+        throw new HttpError(500, errorMsg, { jsonId: input.jsonId });
+    }
+}
 export async function enviarDE(input) {
     const inicial = await recibirJsonYGenerarXmlInicial(input);
     const finalResult = await procesarFlujoAsincronoSifen({
@@ -215,5 +268,19 @@ export async function obtenerEstadoProceso(jsonId) {
         throw new HttpError(404, 'No se encontro el proceso para el jsonId indicado', { jsonId });
     }
     return status;
+}
+export async function consultarLoteSifen(input) {
+    const sifenConfig = loadSifenConfig();
+    const requestId = input.id ?? Date.now();
+    try {
+        const raw = await setApiClient.consultaLote(requestId, input.numeroLote, sifenConfig.ambiente, sifenConfig.certData, sifenConfig.clave, input.config);
+        return typeof raw === 'string'
+            ? await parseStringPromise(raw, { explicitArray: false })
+            : raw;
+    }
+    catch (error) {
+        const errorMsg = toErrorMessage(error);
+        throw new HttpError(502, `Fallo al consultar lote en SIFEN: ${errorMsg}`);
+    }
 }
 //# sourceMappingURL=sifenService.js.map

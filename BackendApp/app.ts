@@ -118,7 +118,12 @@ const options = {
 };
 
 const swaggerSpec = swaggerJSDoc(options);
-app.use(express.json());
+app.use(express.json({
+    verify: (req, _res, buf) => {
+        // Guarda el body original para recuperar numeros grandes sin redondeo de JavaScript.
+        (req as Request & { rawBody?: string }).rawBody = buf.toString('utf8');
+    },
+}));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Rutas p�blicas (no requieren token)

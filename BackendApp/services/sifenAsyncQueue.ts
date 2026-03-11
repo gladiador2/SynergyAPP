@@ -1,11 +1,14 @@
 import logger from '../logger.js';
-import { procesarFlujoAsincronoSifen } from './sifenService.js';
+import { procesarFlujoAsincronoSifen, procesarFlujoAsincronoSifenLote } from './sifenService.js';
+
+export type SifenDispatchMode = 'recibe' | 'recibeLote';
 
 export interface SifenJob {
     jsonId: number;
     xmlGeneradoId: number;
     xmlConQr: string;
     config: Record<string, unknown> | undefined;
+    mode: SifenDispatchMode;
 }
 
 const pendingJobs: SifenJob[] = [];
@@ -26,13 +29,15 @@ function processNext(): void {
 
         activeWorkers += 1;
 
-        procesarFlujoAsincronoSifen(job)
+        const processor = job.mode === 'recibeLote' ? procesarFlujoAsincronoSifenLote : procesarFlujoAsincronoSifen;
+
+        processor(job)
             .then(() => {
-                logger.info(`[SIFEN-ASYNC] Proceso completado jsonId=${job.jsonId}`);
+                logger.info(`[SIFEN-ASYNC] Proceso completado jsonId=${job.jsonId} modo=${job.mode}`);
             })
             .catch((error: unknown) => {
                 const message = error instanceof Error ? error.message : String(error);
-                logger.error(`[SIFEN-ASYNC] Fallo en proceso jsonId=${job.jsonId}: ${message}`);
+                logger.error(`[SIFEN-ASYNC] Fallo en proceso jsonId=${job.jsonId} modo=${job.mode}: ${message}`);
             })
             .finally(() => {
                 activeWorkers -= 1;

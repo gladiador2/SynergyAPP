@@ -430,7 +430,7 @@ router.post('/generateXMLDE', async (req, res) => {
     }
     // genrar QR
     try {
-        const result = await qrgen.generateQR(signedXml, idCSC, CSC, env);
+        const result = await qrgen.generateQR(normalizeXML(signedXml), idCSC, CSC, env);
         xmlResult = normalizeXML(result);
     }
     catch (error) {
@@ -438,30 +438,31 @@ router.post('/generateXMLDE', async (req, res) => {
         return res.status(500).json({ success: false, error: errorMsg });
     }
     //Enviar el XML a SIFEN usando SET API
-    /* try {
-         if (jsonId === null) {
-             return res.status(500).json({ success: false, error: 'jsonId no generado' });
-         }
- 
-         const result = await apiset.default.recibe(jsonId, xmlResult, env, certData, clave, config);
-         const data = typeof result === 'string' ? await parseStringPromise(result, { explicitArray: false }) : result;
-         res.json({ success: true, data });
-     } catch (error) {
-         const errorMsg = error instanceof Error ? error.message : String(error);
-         res.status(500).json({ success: false, error: errorMsg });
-     }
-         */
-    //generar kude utilizando kude
     try {
-        const urlLogo = process.env.logo;
-        const java8Path = process.env.java8path;
-        const srcJasper = process.env.srcJasper;
-        const destFolder = process.env.destFolder;
-        const ambiente = process.env.AMBIENTE;
-        const xml = process.env.xmlSigned;
+        if (jsonId === null) {
+            return res.status(500).json({ success: false, error: 'jsonId no generado' });
+        }
+        const result = await apiset.default.recibeLote(jsonId, [xmlResult], env, certData, clave, config);
+        const data = typeof result === 'string' ? await parseStringPromise(result, { explicitArray: false }) : result;
+        res.json({ success: true, data });
+    }
+    catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        res.status(500).json({ success: false, error: errorMsg });
+    }
+    //generar kude utilizando kude
+    /* try {
+            const urlLogo = process.env.logo;
+                const java8Path = process.env.java8path;
+                const srcJasper = process.env.srcJasper;
+                const destFolder = process.env.destFolder;
+                const ambiente = process.env.AMBIENTE;
+                const xml = process.env.xmlSigned;
+
         if (!java8Path || !urlLogo || !ambiente || !srcJasper || !destFolder || !xml) {
             return res.status(500).json({ success: false, error: 'Variables de entorno de KUDE incompletas' });
         }
+
         const normalizedUrlLogo = urlLogo.trim();
         if (/\s/.test(normalizedUrlLogo)) {
             return res.status(400).json({
@@ -469,15 +470,17 @@ router.post('/generateXMLDE', async (req, res) => {
                 error: "La ruta 'logo' contiene espacios. Usa una ruta sin espacios o una URL sin espacios."
             });
         }
+
         const normalizedSrcJasper = /[\\\/]$/.test(srcJasper) ? srcJasper : `${srcJasper}\\`;
+
         const jsonParm = `{"logo":"${normalizedUrlLogo}"}`;
+
         const kudeResult = await Kude.generateKUDE(java8Path, xml, normalizedSrcJasper, destFolder, jsonParm);
         res.json({ success: true, xml: signedXml, kude: kudeResult });
-    }
-    catch (error) {
+    } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error);
         res.status(500).json({ success: false, error: errorMsg });
-    }
+    }*/
 });
 /**
  * @swagger

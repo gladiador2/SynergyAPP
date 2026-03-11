@@ -1,5 +1,5 @@
 import logger from '../logger.js';
-import { procesarFlujoAsincronoSifen } from './sifenService.js';
+import { procesarFlujoAsincronoSifen, procesarFlujoAsincronoSifenLote } from './sifenService.js';
 const pendingJobs = [];
 let activeWorkers = 0;
 function getMaxWorkers() {
@@ -13,13 +13,14 @@ function processNext() {
             return;
         }
         activeWorkers += 1;
-        procesarFlujoAsincronoSifen(job)
+        const processor = job.mode === 'recibeLote' ? procesarFlujoAsincronoSifenLote : procesarFlujoAsincronoSifen;
+        processor(job)
             .then(() => {
-            logger.info(`[SIFEN-ASYNC] Proceso completado jsonId=${job.jsonId}`);
+            logger.info(`[SIFEN-ASYNC] Proceso completado jsonId=${job.jsonId} modo=${job.mode}`);
         })
             .catch((error) => {
             const message = error instanceof Error ? error.message : String(error);
-            logger.error(`[SIFEN-ASYNC] Fallo en proceso jsonId=${job.jsonId}: ${message}`);
+            logger.error(`[SIFEN-ASYNC] Fallo en proceso jsonId=${job.jsonId} modo=${job.mode}: ${message}`);
         })
             .finally(() => {
             activeWorkers -= 1;

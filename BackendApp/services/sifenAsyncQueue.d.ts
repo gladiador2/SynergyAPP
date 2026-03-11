@@ -1,8 +1,10 @@
+export type SifenDispatchMode = 'recibe' | 'recibeLote';
 export interface SifenJob {
     jsonId: number;
     xmlGeneradoId: number;
     xmlConQr: string;
     config: Record<string, unknown> | undefined;
+    mode: SifenDispatchMode;
 }
 export declare function enqueueSifenJob(job: SifenJob): {
     queueSize: number;

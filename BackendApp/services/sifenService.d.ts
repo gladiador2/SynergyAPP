@@ -38,6 +38,12 @@ export declare function procesarFlujoAsincronoSifen(input: {
     xmlConQr: string;
     config: Record<string, unknown> | undefined;
 }): Promise<ProcesamientoAsincronoResult>;
+export declare function procesarFlujoAsincronoSifenLote(input: {
+    jsonId: number;
+    xmlGeneradoId: number;
+    xmlConQr: string;
+    config: Record<string, unknown> | undefined;
+}): Promise<ProcesamientoAsincronoResult>;
 export declare function enviarDE(input: EnviarDEInput): Promise<EnviarDEResult>;
 export declare function obtenerEstadoProceso(jsonId: number): Promise<{
     id: number;
@@ -45,4 +51,9 @@ export declare function obtenerEstadoProceso(jsonId: number): Promise<{
     error: string | null;
     fechaCreacion: Date;
 }>;
+export declare function consultarLoteSifen(input: {
+    numeroLote: string;
+    id?: number;
+    config?: Record<string, unknown>;
+}): Promise<unknown>;
 //# sourceMappingURL=sifenService.d.ts.map

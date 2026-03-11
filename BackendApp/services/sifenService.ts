@@ -113,12 +113,21 @@ function extractSifenStatusAndError(respuestaSifen: unknown): { estado: string; 
                 };
             };
         };
+        'ns2:rResEnviLoteDe'?: {
+            'ns2:dEstRes'?: unknown;
+            'ns2:dMsgRes'?: unknown;
+            'ns2:gResProc'?: {
+                'ns2:dMsgRes'?: unknown;
+                'ns2:dMsgRe'?: unknown;
+            };
+        };
     };
 
     const protDe = payload['ns2:rRetEnviDe']?.['ns2:rProtDe'];
-    const estadoRaw = protDe?.['ns2:dEstRes'];
-    const msgResRaw = protDe?.['ns2:gResProc']?.['ns2:dMsgRes'];
-    const msgReRaw = protDe?.['ns2:gResProc']?.['ns2:dMsgRe'];
+    const lote = payload['ns2:rResEnviLoteDe'];
+    const estadoRaw = protDe?.['ns2:dEstRes'] ?? lote?.['ns2:dEstRes'];
+    const msgResRaw = protDe?.['ns2:gResProc']?.['ns2:dMsgRes'] ?? lote?.['ns2:gResProc']?.['ns2:dMsgRes'] ?? lote?.['ns2:dMsgRes'];
+    const msgReRaw = protDe?.['ns2:gResProc']?.['ns2:dMsgRe'] ?? lote?.['ns2:gResProc']?.['ns2:dMsgRe'];
 
     const estado = typeof estadoRaw === 'string' && estadoRaw.trim() !== '' ? estadoRaw.trim() : 'sifen_unknown';
     const error = typeof msgResRaw === 'string' && msgResRaw.trim() !== ''
@@ -138,55 +147,6 @@ function getRetryOptionsFromEnv(): SifenRetryOptions {
     };
 }
 
-function getLotePollOptionsFromEnv(): { maxPolls: number; pollIntervalMs: number } { // CAMBIO: nueva configuracion de polling para consulta de lote asincrono.
-    return { // CAMBIO: devolvemos objeto con limites de espera del lote.
-        maxPolls: Number(process.env.SIFEN_LOTE_MAX_POLLS ?? 12), // CAMBIO: maximo de consultas a consultaLote.
-        pollIntervalMs: Number(process.env.SIFEN_LOTE_POLL_MS ?? 5000), // CAMBIO: intervalo entre consultas de lote.
-    }; // CAMBIO: cierre de configuracion de polling.
-} // CAMBIO: cierre de helper para polling asincrono.
-
-function findFirstStringValueByKey(obj: unknown, candidateKeys: string[]): string | null { // CAMBIO: helper generico para extraer campos SIFEN con namespaces variables.
-    if (!obj || typeof obj !== 'object') { // CAMBIO: validacion de entrada recursiva.
-        return null; // CAMBIO: sin objeto no hay valor a extraer.
-    } // CAMBIO: cierre de guard clause.
-
-    const node = obj as Record<string, unknown>; // CAMBIO: casteo para iterar claves dinamicas.
-    for (const key of Object.keys(node)) { // CAMBIO: recorremos claves del nodo actual.
-        const value = node[key]; // CAMBIO: capturamos valor de la clave actual.
-        if (candidateKeys.includes(key) && typeof value === 'string' && value.trim() !== '') { // CAMBIO: si coincide clave objetivo y trae string valido retornamos.
-            return value.trim(); // CAMBIO: retorno normalizado del valor encontrado.
-        } // CAMBIO: cierre de condicion de match.
-
-        if (value && typeof value === 'object') { // CAMBIO: continuamos busqueda en profundidad.
-            const nestedResult = findFirstStringValueByKey(value, candidateKeys); // CAMBIO: recursion para soportar estructuras SOAP variadas.
-            if (nestedResult) { // CAMBIO: cortamos cuando ya encontramos el dato.
-                return nestedResult; // CAMBIO: retorno temprano del hallazgo recursivo.
-            } // CAMBIO: cierre de validacion de resultado recursivo.
-        } // CAMBIO: cierre de exploracion recursiva.
-    } // CAMBIO: cierre del recorrido de claves.
-
-    return null; // CAMBIO: no se encontro ninguna clave candidata.
-} // CAMBIO: cierre de helper de busqueda profunda.
-
-function extractNumeroProtocoloLote(respuesta: unknown): number | null { // CAMBIO: extrae el numero de protocolo devuelto por recibeLote.
-    const raw = findFirstStringValueByKey(respuesta, ['ns2:dProtConsLote', 'dProtConsLote']); // CAMBIO: buscamos protocolo con y sin namespace.
-    if (!raw) { // CAMBIO: sin protocolo no se puede consultar estado de lote.
-        return null; // CAMBIO: devolvemos null para manejarlo arriba.
-    } // CAMBIO: cierre de guard clause de protocolo.
-
-    const parsed = Number(raw); // CAMBIO: convertimos protocolo a numero para consultaLote.
-    return Number.isFinite(parsed) ? parsed : null; // CAMBIO: validamos conversion numerica segura.
-} // CAMBIO: cierre de helper de protocolo.
-
-function isEstadoSifenFinal(estado: string | null): boolean { // CAMBIO: determina si el estado del lote ya es terminal.
-    if (!estado) { // CAMBIO: sin estado no puede ser terminal.
-        return false; // CAMBIO: retorno explicito para estado inexistente.
-    } // CAMBIO: cierre de guard clause.
-
-    const normalized = estado.toLowerCase(); // CAMBIO: normalizamos para comparacion case-insensitive.
-    return normalized.includes('aprob') || normalized.includes('rechaz') || normalized.includes('observ'); // CAMBIO: estados terminales mas comunes en SIFEN.
-} // CAMBIO: cierre de helper de estado final.
-
 async function enviarASifenConReintentos(
     jsonId: number,
     xmlConQr: string,
@@ -195,54 +155,25 @@ async function enviarASifenConReintentos(
     ambiente: Ambiente,
     config?: Record<string, unknown>,
 ): Promise<unknown> {
-    const retryOptions = getRetryOptionsFromEnv(); // CAMBIO: mantenemos reintentos para errores de comunicacion.
-    const lotePollOptions = getLotePollOptionsFromEnv(); // CAMBIO: opciones de polling para flujo asincrono real.
+    const retryOptions = getRetryOptionsFromEnv();
 
     for (let attempt = 1; attempt <= retryOptions.maxRetries; attempt++) {
         try {
-            const rawEnvioLote = await setApiClient.recibeLote( // CAMBIO: cambiamos envio sincronico por envio asincrono en lote.
+            const rawRespuestaSifen = await setApiClient.recibe(
                 jsonId,
-                [xmlConQr], // CAMBIO: recibeLote requiere arreglo de XMLs.
+                xmlConQr,
                 ambiente,
                 certData,
                 clave,
                 config,
             );
 
-            const numeroProtocoloLote = extractNumeroProtocoloLote(rawEnvioLote); // CAMBIO: obtenemos protocolo para consultas posteriores.
-            if (!numeroProtocoloLote) { // CAMBIO: si no hay protocolo devolvemos la respuesta cruda del envio de lote.
-                return typeof rawEnvioLote === 'string' // CAMBIO: soportamos respuesta string o objeto.
-                    ? await parseStringPromise(rawEnvioLote, { explicitArray: false }) // CAMBIO: parse en caso de XML string.
-                    : rawEnvioLote; // CAMBIO: si ya es objeto lo devolvemos.
-            } // CAMBIO: cierre de fallback sin protocolo.
+            const parsed =
+                typeof rawRespuestaSifen === 'string'
+                    ? await parseStringPromise(rawRespuestaSifen, { explicitArray: false })
+                    : rawRespuestaSifen;
 
-            let ultimaConsulta: unknown = rawEnvioLote; // CAMBIO: iniciamos con respuesta de envio de lote.
-            for (let pollAttempt = 1; pollAttempt <= lotePollOptions.maxPolls; pollAttempt++) { // CAMBIO: ciclo de consultas hasta estado terminal o timeout.
-                const rawConsultaLote = await setApiClient.consultaLote( // CAMBIO: consulta asincrona por numero de protocolo de lote.
-                    jsonId,
-                    numeroProtocoloLote,
-                    ambiente,
-                    certData,
-                    clave,
-                    config,
-                );
-
-                const parsedConsulta = typeof rawConsultaLote === 'string' // CAMBIO: normalizamos respuesta de consulta lote.
-                    ? await parseStringPromise(rawConsultaLote, { explicitArray: false })
-                    : rawConsultaLote;
-
-                ultimaConsulta = parsedConsulta; // CAMBIO: persistimos ultima respuesta para retorno por timeout.
-                const estadoConsulta = findFirstStringValueByKey(parsedConsulta, ['ns2:dEstRes', 'dEstRes']); // CAMBIO: buscamos estado de resultado en respuesta de lote.
-                if (isEstadoSifenFinal(estadoConsulta)) { // CAMBIO: terminamos cuando SIFEN devuelve estado final.
-                    return parsedConsulta; // CAMBIO: retorno inmediato con estado final del lote.
-                }
-
-                await updateJsonRecibidoEstado(jsonId, `lote_poll_${pollAttempt}`, null); // CAMBIO: trazabilidad de avance de polling en DB.
-                await sleep(lotePollOptions.pollIntervalMs); // CAMBIO: pausa entre consultas para no saturar SIFEN.
-            }
-
-            return ultimaConsulta; // CAMBIO: si no hubo estado final en tiempo, retornamos ultima consulta disponible.
-
+            return parsed;
         } catch (error) {
             const retryable = isRetryableSifenError(error);
             const isLastAttempt = attempt === retryOptions.maxRetries;
@@ -257,6 +188,49 @@ async function enviarASifenConReintentos(
     }
 
     throw new Error('No se pudo completar el envio a SIFEN luego de varios reintentos');
+}
+
+async function enviarASifenLoteConReintentos(
+    jsonId: number,
+    xmlConQr: string,
+    certData: string,
+    clave: string,
+    ambiente: Ambiente,
+    config?: Record<string, unknown>,
+): Promise<unknown> {
+    const retryOptions = getRetryOptionsFromEnv();
+
+    for (let attempt = 1; attempt <= retryOptions.maxRetries; attempt++) {
+        try {
+            const rawRespuestaSifen = await setApiClient.recibeLote(
+                jsonId,
+                [xmlConQr],
+                ambiente,
+                certData,
+                clave,
+                config,
+            );
+
+            const parsed =
+                typeof rawRespuestaSifen === 'string'
+                    ? await parseStringPromise(rawRespuestaSifen, { explicitArray: false })
+                    : rawRespuestaSifen;
+
+            return parsed;
+        } catch (error) {
+            const retryable = isRetryableSifenError(error);
+            const isLastAttempt = attempt === retryOptions.maxRetries;
+
+            if (!retryable || isLastAttempt) {
+                throw error;
+            }
+
+            await updateJsonRecibidoEstado(jsonId, `sifen_lote_retry_${attempt}`, toErrorMessage(error));
+            await sleep(computeRetryDelay(attempt, retryOptions));
+        }
+    }
+
+    throw new Error('No se pudo completar el envio por lote a SIFEN luego de varios reintentos');
 }
 
 export async function recibirJsonYGenerarXmlInicial(input: EnviarDEInput): Promise<EnviarDEInicialResult> {
@@ -395,6 +369,64 @@ export async function procesarFlujoAsincronoSifen(input: {
     }
 }
 
+export async function procesarFlujoAsincronoSifenLote(input: {
+    jsonId: number;
+    xmlGeneradoId: number;
+    xmlConQr: string;
+    config: Record<string, unknown> | undefined;
+}): Promise<ProcesamientoAsincronoResult> {
+    const sifenConfig = loadSifenConfig();
+    const kudeConfig = loadKudeConfig();
+
+    await updateJsonRecibidoEstado(input.jsonId, 'sifen_lote_processing', null);
+
+    let respuestaSifen: unknown;
+    try {
+        respuestaSifen = await enviarASifenLoteConReintentos(
+            input.jsonId,
+            input.xmlConQr,
+            sifenConfig.certData,
+            sifenConfig.clave,
+            sifenConfig.ambiente,
+            input.config,
+        );
+
+        const sifenResult = extractSifenStatusAndError(respuestaSifen);
+
+        await updateXmlFirmadoRespuestaByXmlGeneradoId(
+            input.xmlGeneradoId,
+            sifenResult.estado,
+            JSON.stringify(respuestaSifen),
+            sifenResult.error,
+        );
+        await updateJsonRecibidoEstado(input.jsonId, sifenResult.estado, sifenResult.error);
+    } catch (error) {
+        const errorMsg = toErrorMessage(error);
+        await updateJsonRecibidoError(input.jsonId, 'error', errorMsg);
+        throw new HttpError(502, `Fallo de comunicacion con SIFEN (lote): ${errorMsg}`, { jsonId: input.jsonId });
+    }
+
+    try {
+        const jsonParm = `{"logo":"${kudeConfig.logo}"}`;
+        const kudeResult = await Kude.generateKUDE(
+            kudeConfig.java8Path,
+            path.join(XML_PRE_SIFEN_DIR, `de-${input.jsonId}.xml`),
+            kudeConfig.srcJasper,
+            kudeConfig.destFolder,
+            jsonParm,
+        );
+
+        return {
+            respuestaSifen,
+            kude: kudeResult,
+        };
+    } catch (error) {
+        const errorMsg = toErrorMessage(error);
+        await updateJsonRecibidoError(input.jsonId, 'error', errorMsg);
+        throw new HttpError(500, errorMsg, { jsonId: input.jsonId });
+    }
+}
+
 export async function enviarDE(input: EnviarDEInput): Promise<EnviarDEResult> {
     const inicial = await recibirJsonYGenerarXmlInicial(input);
     const finalResult = await procesarFlujoAsincronoSifen({
@@ -421,4 +453,31 @@ export async function obtenerEstadoProceso(jsonId: number): Promise<{ id: number
     }
 
     return status;
+}
+
+export async function consultarLoteSifen(input: {
+    numeroLote: string;
+    id?: number;
+    config?: Record<string, unknown>;
+}): Promise<unknown> {
+    const sifenConfig = loadSifenConfig();
+    const requestId = input.id ?? Date.now();
+
+    try {
+        const raw = await setApiClient.consultaLote(
+            requestId,
+            input.numeroLote as unknown as number,
+            sifenConfig.ambiente,
+            sifenConfig.certData,
+            sifenConfig.clave,
+            input.config,
+        );
+
+        return typeof raw === 'string'
+            ? await parseStringPromise(raw, { explicitArray: false })
+            : raw;
+    } catch (error) {
+        const errorMsg = toErrorMessage(error);
+        throw new HttpError(502, `Fallo al consultar lote en SIFEN: ${errorMsg}`);
+    }
 }
